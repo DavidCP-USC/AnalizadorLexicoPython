@@ -1,0 +1,81 @@
+Solo se hará el analizador lexico para el código de ejemplo. Si algo no está en ese script no hace falta comprobarlo ni se evaluará
+
+
+En esta práctica leermos caracteres e identificaremos componentes léxicos para luego enviárselo al analizador sintáctico
+
+wilcoxon.py -> analizador léxico <=> analizador sintático
+			productor-consumidor
+El analizador sintáctico pide un componente léxico (llama a una función (siguienteComponenteLexico())) y el analizador léxico se lo da (componenteLexico)
+
+En este caso, el analizador sintáctica solo imprimirá por pantalla para mostrar que el analizador léxico funciona correctamente (ya se cambiará)
+
+import numpy as num
+El analizador léxico lee caracter a caracter 'i' 'm' 'p' 'o' 'r' 't' ' '. Como he llegado al espacio, hay un autómata finito que ha llegado a un estado final
+
+Representaremos en el analizador sintáctico cada componente léxico como un número. Ej.: import -> 300 (#define IMPORT 300)
+
+Forma de imprimir por pantalla los componentes léxicos:
+	<300, "import">
+El analizador léxico devuelve un STRUCT formado por un int y un puntero a char (300, "import")
+
+----------------------------------------------
+scipy . stats
+scipy -> es un identificador (léxicamente hablando) 
+	<301, "spicy">
+
+ . -> Delimitador 
+ 	<.(como entero), ".">
+
+stats -> es otro identificador
+	<301, "stats">
+-------------------------------------------------
+Para identificar que import es una palabra reservada, spicy un id... --> TABLA DE SIMBOLOS
+
+===================
+ TABLA DE SIMBOLOS
+===================
+"import"|IMPORT
+	|
+	|
+	|
+	|
+	|
+
+Se inicializa la tambla de símbolos antes de empezar en la inicialización del compilador (main.c)
+
+
+
+scipy . stats
+El analizador léxico lee y en el . para (AF estado final)
+Se busca scipy en la tabla de símbolos
+	No está, entonces se inserta y se le asigna un valor ID (que está definido en el #define)
+		
+El . no se comprueba en la TS porque ya sabemos el número que es (ASCII)
+
+OJO con el punto que ya se ha leido (Se explicará en otra clase
+
+
+
+scipy . stats
+El analizador léxico lee y en el . para (AF estado final)
+Se busca scipy en la tabla de símbolos
+	No está, entonces se inserta y se le asigna un valor ID (que está definido en el #define)
+		
+El . no se comprueba en la TS porque ya sabemos el número que es (ASCII)
+
+== OJO ==  con el punto que ya se ha leido (Se explicará en otra clase))
+
+stats -> Se busca en la tabla. No está -> se inserta en la TS con la MACRO ID
+
+
+
+
+
+CONSIDERAREMOS QUE TODOS LOS IDENTIFICADORES ESTÁN EN EL MISMO NIVEL. NO SE VAN A REPETIR NOMBRES EN DIFERENTES BLOQUES. Es el analizador sintáctico el que reconoce los bloques
+
+
+
+#define IMPORT 300
+#define ID 301
+#define PUNTO 302 NO HACE FALTA (Es un único caracter, ya tiene us ASCII)
+
