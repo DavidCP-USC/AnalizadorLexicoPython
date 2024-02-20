@@ -1,3 +1,4 @@
+#define TAM_MAX 255
 #define FALSE 300
 #define NONE 301
 #define TRUE 302

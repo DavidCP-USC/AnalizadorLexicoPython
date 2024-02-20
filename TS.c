@@ -5,14 +5,13 @@
 
 
 
-void initTS(ComponenteLexico* TS){
+void initTS(ComponenteLexico** TS){
     // Reservamos memoria para los 35 componentes lexicos de las
     // palabras reservadas
-    TS = (ComponenteLexico*)malloc(35 * sizeof(ComponenteLexico));
-    
-    // Reservamos memoria para cada una de las cadenas de las palabras reservadas
-    for (int i = 0; i < 35; i++){
-        TS[i].cadena = (char*)malloc(10 * sizeof(char));
+    (*TS) = (ComponenteLexico*)malloc(47 * sizeof(ComponenteLexico));
+    if ((*TS) == NULL){
+        printf("Error al reservar memoria\n");
+        exit(1);
     }
 
     // Definimos las palabras reservadas de Python
@@ -22,6 +21,10 @@ void initTS(ComponenteLexico* TS){
         "for", "from", "global", "if", "import", "in", "is", "lambda", "nonlocal", 
         "not", "or", "pass", "raise", "return", "try", "while", "with", "yield"
     };
+
+    char* delimitadores[12] = {
+        "(", ")", "[", "]", "{", "}", ",", ":", ".", " ", "\n", "EOF"
+    };
     
     int token[35] = {
         FALSE, NONE, TRUE, AND, AS, ASSERT, ASYNC, AWAIT, BREAK, 
@@ -30,19 +33,37 @@ void initTS(ComponenteLexico* TS){
         NOT, OR, PASS, RAISE, RETURN, TRY, WHILE, WITH, YIELD
     };
 
-    // Asignamos las palabras reservadas a la tabla de simbolos
-    for (int i = 0; i < 35; i++){
-        TS[i].cadena = palabrasReservadas[i];
-        printf("%s ", TS[i].cadena);
-        TS[i].token = token[i];
-        printf("%d\n", TS[i].token);
+    // Asignamos y reservamos la memoria para los delimitadores
+    for (int i = 0; i < 12; i++){
+        // Reservamos memoria para cada palabra reservada
+        (*TS)[i].cadena = (char*)malloc(10 * sizeof(char));
+        if ((*TS)[i].cadena == NULL){
+            printf("Error al reservar memoria\n");
+            exit(1);
+        }
+        // Asignamos la palabra reservada y su token
+        (*TS)[i].cadena = delimitadores[i];
+        (*TS)[i].token = delimitadores[i][0];
     }
+    // Asignamos y reservamos la memoria para las palabras 
+    // reservadas a la tabla de simbolos
+    for (int i = 12; i < 47; i++){
+        // Reservamos memoria para cada palabra reservada
+        (*TS)[i].cadena = (char*)malloc(10 * sizeof(char));
+        if ((*TS)[i].cadena == NULL){
+            printf("Error al reservar memoria\n");
+            exit(1);
+        }
+        // Asignamos la palabra reservada y su token
+        (*TS)[i].cadena = palabrasReservadas[i-12];
+        (*TS)[i].token = token[i-12];
+    }
+
 
 }
 
 void imprimirTS (ComponenteLexico* TS, int tamTS){
     for (int i = 0; i < tamTS; i++){
-        printf("a: \n");
         printf("%s: %d\n", TS[i].cadena, TS[i].token);
     }
     

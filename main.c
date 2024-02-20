@@ -4,15 +4,32 @@
 #include "definiciones.h"
 #include "TS.h"
 
+
 int main() {
+    // Abrimos el archivo
+    FILE *archivo;
+    archivo = fopen("wilcoxon.py", "r");
+    if (archivo == NULL){
+        printf("Error al abrir el archivo\n");
+        return 1;
+    }
+
     // Inicializar tabla de simbolos
+    int tamTS = 47;
     ComponenteLexico* TS = NULL;
-    int tamTS = 35;
-    initTS(TS);
-    printf("Iniciado\n");
-    printf("%s\n", TS[0].cadena);
-    printf("Imprimiendo...\n");
-    imprimirTS(TS, 35);
+
+    // Inicializar tabla de simbolos
+    initTS(&TS);
+    // Imprimir tabla de simbolos
+    imprimirTS(TS, tamTS);
+
+    printf("Componentes lexicos:\n");
+    char componenteLexicoActual[TAM_MAX];
+
+    siguienteComponenteLexico(archivo, componenteLexicoActual);
+    printf("Componente lexico: %s\n", componenteLexicoActual);
+    
+
 
     return 0;
 }
