@@ -4,4 +4,6 @@ typedef struct {
     int token;
 }ComponenteLexico;
 
-void initTS();
+void initTS(ComponenteLexico* TS);
+
+void imprimirTS (ComponenteLexico* TS, int tamTS);

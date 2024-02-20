@@ -6,8 +6,13 @@
 
 int main() {
     // Inicializar tabla de simbolos
-    initTS();
-
+    ComponenteLexico* TS = NULL;
+    int tamTS = 35;
+    initTS(TS);
+    printf("Iniciado\n");
+    printf("%s\n", TS[0].cadena);
+    printf("Imprimiendo...\n");
+    imprimirTS(TS, 35);
 
     return 0;
 }
