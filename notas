@@ -79,3 +79,59 @@ CONSIDERAREMOS QUE TODOS LOS IDENTIFICADORES ESTÁN EN EL MISMO NIVEL. NO SE VAN
 #define ID 301
 #define PUNTO 302 NO HACE FALTA (Es un único caracter, ya tiene us ASCII)
 
+
+
+
+-----------------------------------------------
+26/2 IDENTIFICADORES \n += \t
+-----------------------------------------------
+Los """ los tretaremos como comentarios
+
+Los '\n' pueden significar líneas físicas y líneas lógicas
+Podemos seguir una instrucción en la línea siguiente, es porque puede haber paréntesis sin cerrar. Esto tiene que ver con el análisis sintáctico, para la práctica no hay que tenerlo en cuenta
+
+Si leemos '\n' enviamos el componente léxico '\n'
+
+No hace falta incorporar la implementación de la pila para la indentación
+
+
+Los operadores de tipo '+=' son un componente léxico, por lo que hay que meterlo en la TS y en definiciones.h
+	Cuando el analizador léxico encuentre un '=', no lo puede
+	devolver, sino que hay que leer el lexema más largo posible primero
+
+
+¿¿Cómo programamos los autómatas??
+	Estructura de condicionales es lo más senciillo
+		Ej. Autómata de cadenas aulfanuméricas
+				Empiezan por _ o letas ¡¡isdigit()!!
+			Autómata que identifica números...
+			Autómata que identifica un comentario
+	Cada autómata lo hacemos en una función
+
+Un identificador en python no puede empezar ni por dígitos ni por '!'
+
+Para esta práctica no metemos los números en la TS, solo reconocemos componentes léxicos
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
