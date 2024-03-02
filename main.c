@@ -6,6 +6,10 @@
 
 
 int main() {
+    // Inicializar tabla de simbolos
+    abin TS;
+    initTS(&TS);
+
     // Abrimos el archivo
     FILE *archivo;
     archivo = fopen("wilcoxon.py", "r");
@@ -14,22 +18,15 @@ int main() {
         return 1;
     }
 
-    // Inicializar tabla de simbolos
-    int tamTS = 47;
-    ComponenteLexico* TS = NULL;
+    // Empezamos el analisis lexico
+    printf("--- ANALISIS SINTATICO ---\n");
+    analisisSintactico(archivo, TS);
 
-    // Inicializar tabla de simbolos
-    initTS(&TS);
-    // Imprimir tabla de simbolos
-    imprimirTS(TS, tamTS);
+    // Cerramos el archivo y liberamos memoria
+    printf("-- Liberando memoria... --\n");
+    fclose(archivo);
+    destruirTS(&TS);
 
-    printf("Componentes lexicos:\n");
-    char componenteLexicoActual[TAM_MAX];
-
-    siguienteComponenteLexico(archivo, componenteLexicoActual);
-    printf("Componente lexico: %s\n", componenteLexicoActual);
-    
-
-
+    printf("-- Fin del programa --\n");
     return 0;
 }

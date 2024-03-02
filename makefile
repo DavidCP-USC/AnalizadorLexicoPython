@@ -14,10 +14,10 @@ INCLUDES = -I $(HEADER_FILES_DIR)
 OUTPUT = ejecutable
 
 #ficheros .h.  Si hay varios, se precede cada uno con $(HEADER_FILES_DIR)/
-HEADERS = $(HEADER_FILES_DIR)/AnalizadorLexico.h AnalizadorSintactico.h TS.h
+HEADERS = $(HEADER_FILES_DIR)/AnalizadorLexico.h AnalizadorSintactico.h TS.h abin.h
 
 #FUENTES: todos los archivos .c necesarios
-SRCS = main.c AnalizadorLexico.c AnalizadorSintactico.c TS.c
+SRCS = main.c AnalizadorLexico.c AnalizadorSintactico.c TS.c abin.c
 
 #ficheros .o: todos los .o con un analogo .c en SRCS
 OBJS = $(SRCS:.c=.o)
@@ -39,6 +39,6 @@ $(OUTPUT): $(OBJS)
 cleanall: clean
 	rm   -f $(OUTPUT) 
 
-# REGLA 4: borra los ficheros .o y los de backup (terminan en ~)
+# REGLA 4: borra los ficheros .o
 clean:
-	rm -f *.o *~
+	rm -f *.o

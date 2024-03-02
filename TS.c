@@ -4,7 +4,7 @@
 #include "TS.h"
 
 
-
+/*
 void initTS(ComponenteLexico** TS){
     // Reservamos memoria para los 35 componentes lexicos de las
     // palabras reservadas
@@ -67,4 +67,28 @@ void imprimirTS (ComponenteLexico* TS, int tamTS){
         printf("%s: %d\n", TS[i].cadena, TS[i].token);
     }
     
+}
+*/
+
+void initTS(abin *TS){
+    crear(TS);
+    insertar(TS, DEF, "def");
+    insertar(TS, IMPORT, "import");
+    insertar(TS, AS, "as");
+    insertar(TS, FOR, "for");
+    insertar(TS, IN, "in");
+    insertar(TS, IF, "if");
+    insertar(TS, ELIF, "elif");
+    insertar(TS, ELSE, "else");
+    insertar(TS, RETURN, "return");
+    insertar(TS, NOT, "not");
+    insertar(TS, ID, "id");
+}
+
+void imprimirTS (abin TS){
+    imprimir(TS);
+}
+
+void destruirTS(abin* TS){
+    destruir(TS);
 }

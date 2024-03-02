@@ -1,1 +1,3 @@
-void siguienteComponenteLexico(FILE *archivo, char* siguienteComponenteLexico);
+#include "abin.h"
+
+int siguienteComponenteLexico(FILE *archivo, abin TS);

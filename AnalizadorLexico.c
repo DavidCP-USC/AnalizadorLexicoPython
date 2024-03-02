@@ -3,8 +3,9 @@
 #include "definiciones.h"
 #include "TS.h"
 #include "AnalizadorLexico.h"
-#define TAM_MAX 255
+#include <ctype.h>
 
+/*
 void siguienteComponenteLexico(FILE *archivo, char* componenteLexico){
     int indiceComponenteLexico = 0;
     char caracter;
@@ -41,4 +42,88 @@ void siguienteComponenteLexico(FILE *archivo, char* componenteLexico){
     }
     // Agregamos el caracter nulo al final de la cadena
     componenteLexico[indiceComponenteLexico] = '\0';
+}
+*/
+
+void _saltarComentario(FILE *archivo, char *caracter);
+int  identificarSiComentarioMultilinea(FILE *archivo, char *caracter);
+void _saltarComentarioMultilinea(FILE *archivo, char *caracter);
+
+int siguienteComponenteLexico(FILE *archivo, abin TS){
+    int error = 0;
+    int estado = 0;
+    int terminado = 0;
+    char caracter;
+    int componenteLexico = 0; 
+
+    while (!(terminado || error)){
+        caracter = fgetc(archivo);
+        switch (estado){
+            case 0:
+                if (caracter == '#'){
+                    estado = 1; // Identificar comentarios
+                }
+                else if(caracter == '"'){ // Posible comentario multilinea
+                    if (_identificarSiComentarioMultilinea(archivo, &caracter)){
+                        estado = 2; // Saltar comentario multilinea
+                    }
+                    else{ // Leemos la cadena
+                        estado = 3;
+                    }
+                }
+                break;
+            case 1: // Identificar comentarios
+                _saltarComentario(archivo, &caracter);
+                return 1;
+                break;
+            case 2: // Identificar comentarios multilinea
+                _saltarComentarioMultilinea(archivo, &caracter);
+                return 1;
+                break;
+            case 3: // Identificar cadenas
+                _identificarCadena(archivo, &caracter);
+            break;
+        }
+    }
+    return componenteLexico;
+}
+
+
+void _saltarComentario(FILE *archivo, char *caracter){
+    printf("Se encontro un comentario de una linea\n");
+    while (*caracter != '\n'){
+        *caracter = fgetc(archivo);
+    }
+}
+
+int  identificarSiComentarioMultilinea(FILE *archivo, char *caracter){
+    int posicionArchivo;   
+    // Guardamos la posicion del archivo
+    posicionArchivo = ftell(archivo);
+    if (fgetc(archivo) == '"'){ // Posible comentario multilinea
+        if (fgetc(archivo) == '"'){ // ES un comentario multilinea
+            return 1;
+        }
+        else{ // Si no es comentario multilinea, retrocedemos el puntero
+            fseek(archivo, posicionArchivo, SEEK_SET);
+            return 0;
+        }
+    }
+}
+void _saltarComentarioMultilinea(FILE *archivo, char *caracter){
+    printf("Se encontro un comentario multilinea\n");
+    while (1){
+        *caracter = fgetc(archivo);
+        if (*caracter == '"'){
+            if (fgetc(archivo) == '"'){
+                if (fgetc(archivo) == '"'){
+                    break;
+                }
+            }
+        }
+        if (*caracter == EOF){
+            printf("Error: comentario multilinea no cerrado\n");
+            break;
+        }
+    }
 }

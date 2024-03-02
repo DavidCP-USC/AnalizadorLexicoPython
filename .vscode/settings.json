@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "analizadorsintactico.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "analizadorlexico.h": "c",
+        "definiciones.h": "c"
     }
 }
