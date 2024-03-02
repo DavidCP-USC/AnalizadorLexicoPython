@@ -110,6 +110,7 @@ int  identificarSiComentarioMultilinea(FILE *archivo, char *caracter){
         }
     }
 }
+
 void _saltarComentarioMultilinea(FILE *archivo, char *caracter){
     printf("Se encontro un comentario multilinea\n");
     while (1){
@@ -127,3 +128,11 @@ void _saltarComentarioMultilinea(FILE *archivo, char *caracter){
         }
     }
 }
+
+_identificarCadena(FILE *archivo, char *caracter){
+    printf("Se encontro una cadena\n");
+    while (*caracter != '"'){
+        *caracter = fgetc(archivo);
+    }
+}
+
