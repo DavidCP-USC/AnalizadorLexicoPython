@@ -113,14 +113,46 @@ Un identificador en python no puede empezar ni por dígitos ni por '!'
 Para esta práctica no metemos los números en la TS, solo reconocemos componentes léxicos
 
 
+-------------------------------------
+		4/3
+-------------------------------------
+	Sistema de entrada
+
+Empezamos con un tamaño de bloque muy grande y cuando la práctica funciones lo vamos reduciendo hasta que sea óptimo
+
+
+El sistema de entrada devuelve caracteres al analizador léxico mediante el patrón productor consumidor
+
+El sistema de entrada debe ser eficiente para que no sea un cuello de botella
+
+Doble buffer mediante el método del centinela
+"No hace falta fseek"
+scipy... -> El analizador léxico llama a la función de cadenas alfanuméricas y 
+
+
+A los arrays intermedios no les deben sobrar espacios
+
+El sistema de entrada tiene que proporcionar la funcion de devolveCaracter (que comprobará que no vuelves al bloque anterior) ya que cuando encuentra un delimitador tiene que enviarlo dos veces. Una para saber que ha terminado de leer el lexema y  otra para posteriormente analizar el delimitador
+
+ | | =| 2| 6| 5|EOF
+
+ Empezamos en el 2 -> autómata de números (si luego hace falta ya se redireccionará al de alfanuméricas)
+ Leemos 65 y cargamos el siguiente bloque
+
+ | | =| 2| 6| 5|EOF      |+ | a| c| e| l|EOF
+
+ El puntero delantero es el que indica lo que se va devolviendo, inicio muestra el inicio del lexema. Solo se actualiza cuando se encuentra el delimitador
+
+El analizador léxico le pide al sistema de entrada el lexema cuando llega a un estado final (funcion en SistemaEntrada.h). La función recorre los punteros desde inicio hasta delantero teniendo en cuenta que puede haber cualquier EOF de los arrays, estar al principio, al final, en el medio...
+
+Si el lexema es mayor de lo permitido se indicará un error pero seguriá analizando en el autómata hasta encontrar el siguiente lexema. Sería como "saltarloSi el lexema es mayor de lo permitido se indicará un error pero seguriá analizando en el autómata hasta encontrar el siguiente lexema. Sería como "saltarlo". Se va a perder una parte del lexema pero no importa, ya se sabe que es un error. Y OJO CON LOS PUNTEROS. Hay que meterlo en la TS y puede ser que dos lexemas diferentes, como solo guardas una parte, se identifiquen como uno solo. No lo contemplaremos
+
+
+PRIMERO QUE FUNCIONES, LUEGO YA LO MEJORARÁS
 
 
 
-
-
-
-
-
+AL FINAL SE EJECUTA EL PROGRAMA CON LA APLICACIÓN VALGRIND PARA VER SI QUEDAN PUNTEROS O MEMORIA SIN LIBERAR
 
 
 
