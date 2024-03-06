@@ -1,4 +1,5 @@
 #define TAM_MAX 255
+#define TAM_DELIMITERS 12
 #define DEF 300
 #define IMPORT 301
 #define AS 302
