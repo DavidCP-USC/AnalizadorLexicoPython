@@ -1,5 +1,11 @@
+// Constantes y definiciones para el analizador léxico
+
+// -- Constantes --
 #define TAM_MAX 255
+#define TAM_MAX_LEXEMA 64
 #define TAM_DELIMITERS 12
+
+// -- Tokens -- 
 #define DEF 300
 #define IMPORT 301
 #define AS 302
@@ -11,3 +17,17 @@
 #define RETURN 308
 #define NOT 309
 #define ID 310
+
+// -- Tokens de operadores de mas de un caracter --
+#define MAYORIGUAL 411 // >=
+#define MENORIGUAL 412 // <=
+#define DISTINTO 414 // !=
+
+// -- Tokens de gestion de errores --
+#define ERROR_SISTEMA_DE_ENTRADA 500
+#define ERROR_ANALIZADOR_LEXICO 501
+#define ERROR_ANALIZADOR_SINTACTICO 502
+
+
+
+

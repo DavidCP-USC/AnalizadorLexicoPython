@@ -1,1 +1,1 @@
-void analisisSintactico(FILE *archivo, abin TS);
+void analisisSintactico(abin TS);

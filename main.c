@@ -3,28 +3,31 @@
 #include "AnalizadorSintactico.h"
 #include "definiciones.h"
 #include "TS.h"
+#include "SistemaEntrada.h"
 
 
-int main() {
+int main(int argc, char *argv[]) {
+    // Verificamos que se haya ingresado un archivo de entrada
+    if (argc != 2){
+        printf("Error: Debe ingresar un archivo de entrada\n");
+        return 1;
+    }
+
     // Inicializar tabla de simbolos
     abin TS;
     initTS(&TS);
 
-    // Abrimos el archivo
-    FILE *archivo;
-    archivo = fopen("wilcoxon.py", "r");
-    if (archivo == NULL){
-        printf("Error al abrir el archivo\n");
-        return 1;
-    }
+    // Inicializamos el sistema de entrada
+    inicializarSistemaEntrada(argv[1]);
+
 
     // Empezamos el analisis lexico
     printf("--- ANALISIS SINTATICO ---\n");
-    analisisSintactico(archivo, TS);
+    analisisSintactico(TS);
 
     // Cerramos el archivo y liberamos memoria
     printf("-- Liberando memoria... --\n");
-    fclose(archivo);
+    finalizarSistemaEntrada();
     destruirTS(&TS);
 
     printf("-- Fin del programa --\n");

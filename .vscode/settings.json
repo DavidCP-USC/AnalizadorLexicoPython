@@ -3,6 +3,7 @@
         "analizadorsintactico.h": "c",
         "stdio.h": "c",
         "analizadorlexico.h": "c",
-        "definiciones.h": "c"
+        "definiciones.h": "c",
+        "ts.h": "c"
     }
 }
