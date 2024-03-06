@@ -69,9 +69,10 @@ void leer(abin A, tipoelem *E);
 void insertar(abin *A, int valor, char *lexema);
 
 //funcion que busca un lexema y devuelve su valor; si no esta en el arbol lo inserta
-int buscar_lexema(abin *A, char *lexema);
+tipoelem buscar_lexema(abin *A, char *lexema);
 
 //funcion que imprime el arbol
 void imprimir(abin *A);
+
 
 #endif	// ABIN_H

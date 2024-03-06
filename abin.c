@@ -14,6 +14,7 @@ typedef struct{
     char *lexema;
 } tipoelem;
 
+
 /////////////////////ESTRUCTURAS DE DATOS
 struct celda{
 	tipoelem info;
@@ -34,6 +35,7 @@ void crear(abin *A){
 void supizq(abin *A);
 void supder(abin *A);
 unsigned esVacio(abin A);
+void imprimir(abin *A) ;
 void destruir(abin *A){
 	abin aux;
 	aux=*A;
@@ -113,16 +115,19 @@ void insertar(abin *A, int valor, char *lexema) {
 }
 
 //funcion que busca un lexema y devuelve su valor; si no esta en el arbol lo inserta
-int buscar_lexema(abin *A, char *lexema) {
-
+tipoelem buscar_lexema(abin *A, char *lexema) {
     if (esVacio(*A)) {
         insertar(A, ID, lexema);
-        return ID;
+        // Creamos el tipoelem
+        tipoelem returnValue;
+        returnValue.valor = ID;
+        returnValue.lexema = (char*) malloc(strlen(lexema) + 1 * sizeof(char));
+        return returnValue;
     }
 
     int comp = strcmp(lexema, (*A)->info.lexema);
     if (comp == 0) {
-        return (*A)->info.valor;
+        return (*A)->info;
     } else if (comp < 0) {
         return (buscar_lexema(&(*A)->izq, lexema));
     } else {
@@ -131,15 +136,17 @@ int buscar_lexema(abin *A, char *lexema) {
 
 }
 
-void imprimir(abin A) {
-    if (!esVacio(A)) {
-        if (A->izq != NULL) {
-            imprimir(A->izq);
+
+void imprimir(abin *A) {
+    if (!esVacio(*A)) {
+        if (&(*A)->izq != NULL) {
+            imprimir(&(*A)->izq);
         }
 
-        if (A->der != NULL) {
-            imprimir(A->der);
+        if (&(*A)->der != NULL) {
+            imprimir(&(*A)->der);
         }
-            printf("Lexema: %s - Valor: %d\n", A->info.lexema,  A->info.valor);
+            printf("Lexema: %s - Valor: %d\n", (*A)->info.lexema,  (*A)->info.valor);
+    
     }
 }

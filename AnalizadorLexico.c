@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "definiciones.h"
-#include "TS.h"
 #include "AnalizadorLexico.h"
 #include <ctype.h>
 #include <string.h>
@@ -21,12 +20,12 @@ void _identificarID(FILE *archivo, char *caracter);
 int _esDelimitador(char cadena);
 
 
-int siguienteComponenteLexico(FILE *archivo, abin TS){
+tipoelem siguienteComponenteLexico(FILE *archivo, abin TS){
     int error = 0;
     int estado = 0;
     int terminado = 0;
     char caracter;
-    int componenteLexico = 0; 
+    tipoelem returnValue;
 
 
     while (!(terminado || error)){
@@ -66,11 +65,17 @@ int siguienteComponenteLexico(FILE *archivo, abin TS){
             break;
         }
     }
-
+    if (!strncmp(lexema, ".", 1)){
+        returnValue.valor = '.';
+        returnValue.lexema = (char*) malloc(1 * sizeof(char));
+        returnValue.lexema = ".";
+        return returnValue;
+    }
     // Buscamos el entero correspondiente al lexema en la TS
-    componenteLexico = buscar_lexema(TS, lexema);
+    returnValue = buscar_lexema(&TS, lexema);
+                
 
-    return componenteLexico;
+    return returnValue;
 }
 
 void _vaciarBuffer(char *buffer){
@@ -129,14 +134,13 @@ void _identificarID(FILE *archivo, char *caracter){
         indiceBuffer++;
         *caracter = fgetc(archivo);
     }
-    printf("Fin bucle\n");
     // Añadimos el caracter de fin de cadena
     buffer[indiceBuffer] = '\0';
     // Copiamos el buffer en el lexema
     strncpy(lexema, buffer, indiceBuffer);
-    printf("Buffer: %s\n", buffer);
     // Vaciamos el buffer
     _vaciarBuffer(buffer);
+    printf("Buffer: %s\n", buffer);
 }
 
 int _esDelimitador(char cadena){

@@ -1,3 +1,3 @@
-#include "abin.h"
+#include "TS.h"
 
-int siguienteComponenteLexico(FILE *archivo, abin TS);
+tipoelem siguienteComponenteLexico(FILE *archivo, abin TS);

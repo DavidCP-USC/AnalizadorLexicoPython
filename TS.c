@@ -86,7 +86,7 @@ void initTS(abin *TS){
 }
 
 void imprimirTS (abin TS){
-    imprimir(TS);
+    imprimir(&TS);
 }
 
 void destruirTS(abin* TS){

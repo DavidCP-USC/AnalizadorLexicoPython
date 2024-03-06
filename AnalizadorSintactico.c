@@ -1,15 +1,14 @@
 #include <stdio.h>
 #include "AnalizadorLexico.h"
 #include "definiciones.h"
-#include "TS.h"
 #include <unistd.h>
 
 void analisisSintactico(FILE *archivo, abin TS){
-    int componenteLexico = 0;
-    while (componenteLexico != EOF){
+    tipoelem componenteLexico;
+    do{
         componenteLexico = siguienteComponenteLexico(archivo, TS);
-        printf("Componente lexico: %d\n", componenteLexico);
-        sleep(3);
-    }
+        printf("Componente lexico - Lexema %d - Valor %s\n", componenteLexico.valor, componenteLexico.lexema);
+        sleep(1);
+    }while (componenteLexico.valor != EOF);
     printf("--- FIN DEL ANALISIS SINTATICO ---\n");
 }
