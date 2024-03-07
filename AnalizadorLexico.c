@@ -30,7 +30,7 @@ tipoelem siguienteComponenteLexico(){
 
 
     while (!(terminado || error)){
-        printf("\tEstado: %d\n", estado);
+        //printf("\tEstado: %d\n", estado);
         switch (estado){
             case 0:
                 caracter = siguienteCaracter();
@@ -177,12 +177,9 @@ void _saltarComentarioMultilinea(char *caracter){
 
 void _identificarCadenasAlfanumericas(char *caracter){
     do{
-        printf("Caracter: %c\n", *caracter);
         *caracter = siguienteCaracter();
     }while(isalpha(*caracter) || isdigit(*caracter) || *caracter == '_');
-    printf("Caracter: %c\n", *caracter);
     if (_esLexemaUnicaracter(*caracter) || isblank(*caracter) || *caracter == '\n' || *caracter == EOF){
-        printf("Salto\n");
         _recuperarLexema(ID, 1);
     }
     else{
@@ -194,11 +191,10 @@ void _identificarCadenasAlfanumericas(char *caracter){
 
 void _recuperarLexema(int tipo, int retroceder){
     if (retroceder){
-        printf("Retroceder\n");
         retrocederCaracter();
     }
     if (tipo == ID){
-        printf("ID\n");
+
         obtenerLexema(&returnValue);
         returnValue.valor = obtenerValorTS(returnValue.lexema);
     }

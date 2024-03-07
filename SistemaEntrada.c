@@ -99,18 +99,40 @@ void aceptarLexema(){
 Funcion que obtiene el lexema que se encuentra en el buffer
 Parametros:
     tipoelem *returnValue: Puntero al tipo de dato que se va a devolver
-
+Notas:
+    Siempre vamos a reservar memoria para n+1 caracteres, 
+    donde n es el tamaño del lexema y el +1 es para el caracter
+    de fin de cadena ('\0')
 */
 void obtenerLexema(tipoelem *returnValue){
+    int tamano = db.delantero - db.inicio + 1;
     // Reservamos memoria para el lexema
     if (returnValue->lexema != NULL){
         free(returnValue->lexema);
     }
-    // Pedimos memoria para el lexema (el +1 es para el caracter de fin de cadena '\0') 
-    returnValue->lexema = (char*) malloc(db.delantero - db.inicio+1);
-    // Copiamos el lexema en el puntero y añadimos el caracter de fin de cadena
-    printf("Obteniendo lexema\n");
-    strncpy(returnValue->lexema, &db.buffer[db.inicio], db.delantero - db.inicio);
+    printf("Delantero: -%d-\nInicio: -%d-\n", db.delantero, db.inicio);
+
+
+    // Comprobamos si el lexema se encuentra entre el segundo bloque y el primero
+    if (db.delantero < db.inicio){
+        tamano = TAM_MAX_LEXEMA*2 - db.inicio + db.delantero + 1;
+        returnValue->lexema = (char*) malloc(tamano);
+        strncpy(returnValue->lexema, &db.buffer[db.inicio], TAM_MAX_LEXEMA*2 - db.inicio + 1);
+        strncpy(&returnValue->lexema[TAM_MAX_LEXEMA*2 - db.inicio + 1], &db.buffer[0], db.delantero);
+    }
+    // Comprobamos si el lexema se encuentra entre el primer bloque y el segundo
+    else if (db.inicio < CENTINELA1 && db.delantero > CENTINELA1){
+        tamano = CENTINELA1 - db.inicio + db.delantero - CENTINELA1 + 1;
+        returnValue->lexema = (char*) malloc(tamano);
+        strncpy(returnValue->lexema, &db.buffer[db.inicio], CENTINELA1 - db.inicio);
+        strncpy(&returnValue->lexema[CENTINELA1 - db.inicio], &db.buffer[CENTINELA1 + 1], db.delantero - CENTINELA1);
+    }
+    else{
+        tamano = db.delantero - db.inicio + 1;
+        returnValue->lexema = (char*) malloc(tamano);
+        strncpy(returnValue->lexema, &db.buffer[db.inicio], tamano - 1);
+    }
+    // Anadimos el caracter de fin de cadena
     returnValue->lexema[db.delantero - db.inicio] = '\0';
 }
 
