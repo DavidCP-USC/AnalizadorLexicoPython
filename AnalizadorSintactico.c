@@ -3,12 +3,11 @@
 #include "definiciones.h"
 #include <unistd.h>
 
-void analisisSintactico(abin TS){
+void analisisSintactico(){
     tipoelem componenteLexico;
     do{
-        componenteLexico = siguienteComponenteLexico(TS);
-        printf("Componente lexico - Lexema %d - Valor %s\n", componenteLexico.valor, componenteLexico.lexema);
-        sleep(1);
+        componenteLexico = siguienteComponenteLexico();
+        printf("Componente lexico\tLexema %d\tValor -%s-\n", componenteLexico.valor, componenteLexico.lexema);
+        //sleep(1);
     }while (componenteLexico.valor != EOF);
-    printf("--- FIN DEL ANALISIS SINTATICO ---\n");
 }

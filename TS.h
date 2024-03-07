@@ -11,8 +11,10 @@ void initTS(ComponenteLexico** TS);
 void imprimirTS (ComponenteLexico* TS, int tamTS);
 */
 
-void initTS(abin* TS);
+void initTS();
 
-void imprimirTS (abin TS);
+void imprimirTS ();
 
-void destruirTS(abin* TS);
+void destruirTS();
+
+int obtenerValorTS(char* lexema);

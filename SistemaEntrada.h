@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "definiciones.h"
+#include "abin.h"
 
 #define CENTINELA1 TAM_MAX_LEXEMA
 #define CENTINELA2 TAM_MAX_LEXEMA*2+1
@@ -25,4 +26,12 @@ char siguienteCaracter();
 
 void retrocederCaracter();
 
+void devolverCaracter();
+
 void finalizarSistemaEntrada();
+
+void obtenerLexema(tipoelem *returnValue);
+
+void aceptarLexema();
+
+void rellenarTipoElemTS(int tipo, tipoelem *returnValue);

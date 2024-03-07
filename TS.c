@@ -69,26 +69,31 @@ void imprimirTS (ComponenteLexico* TS, int tamTS){
     
 }
 */
+abin TS;
 
-void initTS(abin *TS){
-    crear(TS);
-    insertar(TS, DEF, "def");
-    insertar(TS, IMPORT, "import");
-    insertar(TS, AS, "as");
-    insertar(TS, FOR, "for");
-    insertar(TS, IN, "in");
-    insertar(TS, IF, "if");
-    insertar(TS, ELIF, "elif");
-    insertar(TS, ELSE, "else");
-    insertar(TS, RETURN, "return");
-    insertar(TS, NOT, "not");
-    insertar(TS, ID, "id");
+void initTS(){
+    crear(&TS);
+    insertar(&TS, DEF, "def");
+    insertar(&TS, IMPORT, "import");
+    insertar(&TS, AS, "as");
+    insertar(&TS, FOR, "for");
+    insertar(&TS, IN, "in");
+    insertar(&TS, IF, "if");
+    insertar(&TS, ELIF, "elif");
+    insertar(&TS, ELSE, "else");
+    insertar(&TS, RETURN, "return");
+    insertar(&TS, NOT, "not");
+    insertar(&TS, ID, "id");
 }
 
-void imprimirTS (abin TS){
+int obtenerValorTS(char* lexema){
+    return buscar_lexema(&TS, lexema).valor;
+}
+
+void imprimirTS (){
     imprimir(&TS);
 }
 
-void destruirTS(abin* TS){
-    destruir(TS);
+void destruirTS(){
+    destruir(&TS);
 }

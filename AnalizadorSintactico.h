@@ -1,1 +1,1 @@
-void analisisSintactico(abin TS);
+void analisisSintactico();

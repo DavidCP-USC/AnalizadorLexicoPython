@@ -1,3 +1,3 @@
 #include "TS.h"
 
-tipoelem siguienteComponenteLexico(abin TS);
+tipoelem siguienteComponenteLexico();

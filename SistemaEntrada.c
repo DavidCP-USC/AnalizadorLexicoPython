@@ -1,4 +1,7 @@
 #include "SistemaEntrada.h"
+#include "abin.h"
+#include <string.h>
+
 
 
 // Aplicamos el Patron Singleton
@@ -41,18 +44,20 @@ char siguienteCaracter(){
         unsigned int bytesLeidos = 0;
         // Si es el EOF del centinela 1 actualizamos el segundo bloque
         if (db.delantero == CENTINELA1){
-            bytesLeidos = fread(db.buffer+INICIO_BLOQUE2, 1, TAM_MAX_LEXEMA, archivo);
+            bytesLeidos = fread(&db.buffer[INICIO_BLOQUE2], 1, TAM_MAX_LEXEMA, archivo);
             // Comprobamos si hemos llegado al final del archivo
             if (feof(archivo)){
-                db.buffer[bytesLeidos + INICIO_BLOQUE2] = EOF;
-                db.delantero++;
+                db.buffer[bytesLeidos + INICIO_BLOQUE2] = EOF; // fread no guarda el EOF, lo anadimos manualmente
             }
+            db.delantero++;
         }
 
         // Si es el EOF del centinela 2 actualizamos el primer bloque
         else if (db.delantero == CENTINELA2){
             bytesLeidos = fread(db.buffer, 1, TAM_MAX_LEXEMA, archivo);
-            db.buffer[bytesLeidos] = EOF;
+            if (feof(archivo)){
+                db.buffer[bytesLeidos] = EOF; // fread no guarda el EOF, lo anadimos manualmente
+            }
             db.delantero = 0; // Volvemos al principio del buffer
         }
 
@@ -70,8 +75,7 @@ char siguienteCaracter(){
 }
 
 
-
-void devolverCaracter(){
+void retrocederCaracter(){
     db.delantero--;
     // Si el delantero es menor que 0, es que estamos en el primer
     // bloque y aca
@@ -81,6 +85,33 @@ void devolverCaracter(){
     else if (db.delantero == CENTINELA1){
         db.delantero--;
     }
+}
+
+void aceptarLexema(){
+    db.inicio = db.delantero;
+}
+
+
+
+
+
+/*
+Funcion que obtiene el lexema que se encuentra en el buffer
+Parametros:
+    tipoelem *returnValue: Puntero al tipo de dato que se va a devolver
+
+*/
+void obtenerLexema(tipoelem *returnValue){
+    // Reservamos memoria para el lexema
+    if (returnValue->lexema != NULL){
+        free(returnValue->lexema);
+    }
+    // Pedimos memoria para el lexema (el +1 es para el caracter de fin de cadena '\0') 
+    returnValue->lexema = (char*) malloc(db.delantero - db.inicio+1);
+    // Copiamos el lexema en el puntero y añadimos el caracter de fin de cadena
+    printf("Obteniendo lexema\n");
+    strncpy(returnValue->lexema, &db.buffer[db.inicio], db.delantero - db.inicio);
+    returnValue->lexema[db.delantero - db.inicio] = '\0';
 }
 
 void finalizarSistemaEntrada(){
@@ -106,3 +137,4 @@ void _imprimirDobleBuffer(){
     printf("Inicio: %d\n", db.inicio);
     printf("Delantero: %d\n", db.delantero);
 }
+

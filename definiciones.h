@@ -3,7 +3,7 @@
 // -- Constantes --
 #define TAM_MAX 255
 #define TAM_MAX_LEXEMA 64
-#define TAM_DELIMITERS 12
+#define TAM_LEXEMAS_UNICARACTER 14
 
 // -- Tokens -- 
 #define DEF 300

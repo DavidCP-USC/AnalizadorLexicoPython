@@ -6,38 +6,43 @@
 #include "definiciones.h"
 #include "AnalizadorLexico.h"
 #include "SistemaEntrada.h"
+#include "TS.h"
 
 char lexema[TAM_MAX];
 char buffer[TAM_MAX];
 int indiceBuffer = 0;
-char delimitadores[TAM_DELIMITERS] = "()[]{},:. \n\0";
-// EOF TODO
+char lexemasIndividuales[TAM_LEXEMAS_UNICARACTER] = "()[]{}.=,:;!&|";
+tipoelem returnValue;
 
 void _saltarComentario(char *caracter);
-//int  _identificarSiComentarioMultilinea(char *caracter);
+int  _identificarSiComentarioMultilinea(char *caracter) ;
 void _saltarComentarioMultilinea(char *caracter);
-//void _identificarID(char *caracter);
-int _esDelimitador(char cadena);
+int _esLexemaUnicaracter(char cadena);
+void _recuperarLexema(int tipo, int retroceder);
+void _identificarCadenasAlfanumericas(char *caracter);
 
 
-tipoelem siguienteComponenteLexico(abin TS){
+tipoelem siguienteComponenteLexico(){
     short error = 0;
     short estado = 0;
     short terminado = 0;
     char caracter;
-    tipoelem returnValue;
 
 
     while (!(terminado || error)){
-        caracter = siguienteCaracter();
+        printf("\tEstado: %d\n", estado);
         switch (estado){
             case 0:
+                caracter = siguienteCaracter();
                 if (caracter == '#'){
                     estado = 1; // Automata de comentarios de una linea
                 }
                 else if(caracter == '"'){
-                     if (_identificarSiComentarioMultilinea(&caracter)){
+                    if (_identificarSiComentarioMultilinea(&caracter)){
                         estado = 2; // Automata de comentarios multilinea
+                    }
+                    else{
+                        estado = 5; // Automata de strings
                     }
                 }
                 else if (isalpha(caracter) || caracter == '_'){
@@ -46,14 +51,14 @@ tipoelem siguienteComponenteLexico(abin TS){
                 else if (isdigit(caracter)){
                     estado = 4; // Automata de numeros
                 }
-                else if (caracter == '"' || caracter == '`'){
+                else if (caracter == '`'){ // Las " ya se han comprobado antes
                     estado = 5; // Automata de strings
                 }
-                else if(caracter == '+' || caracter == '-' || caracter == '*' || caracter == '/' || caracter == '=' || caracter == '<' || caracter == '>'){
+                else if(caracter == '+' || caracter == '-' || caracter == '*' || caracter == '/' || caracter == '<' || caracter == '>'){
                     estado = 6; // Automata de operadores
                 }
-                else if (caracter == '(' || caracter == ')' || caracter == '[' || caracter == ']' || caracter == '{' || caracter == '}'){
-                    estado = 7; // Automata de delimitadores
+                else if (_esLexemaUnicaracter(caracter)){
+                    estado = 7; // Automata de lexemas de un caracter que no sean operadores ni letras
                 }
                 else if (caracter == EOF) { //si encontramos un EOF (esto funciona solo para el sistema de entrada simple)
                     returnValue.valor = EOF;
@@ -61,8 +66,14 @@ tipoelem siguienteComponenteLexico(abin TS){
                     terminado = 1;
                 }
                 else if(isblank(caracter) || caracter == '\n'){
-                    terminado = 1;
-                    recuperarLexema();
+                    // Puede haber multiples espacios en blanco o saltos de linea
+                    // entre componentes lexicos, por lo que nos los saltamos
+                    do{
+                        caracter = siguienteCaracter();
+                    }while (isblank(caracter) || caracter == '\n');
+                    retrocederCaracter();
+                    aceptarLexema();
+                
                 }
                 else{
                     // GESTIONAR ERROR
@@ -70,11 +81,6 @@ tipoelem siguienteComponenteLexico(abin TS){
                     printf("Error: Caracter no reconocido\n");
                     error = 1;
                 }
-
-
-
-
-
                 break;
             case 1: // Identificar comentarios
                 _saltarComentario(&caracter);
@@ -85,88 +91,76 @@ tipoelem siguienteComponenteLexico(abin TS){
                 estado = 0;
                 break;
             case 3: // Identificar cadenas
-                _identificarID(&caracter);
+                _identificarCadenasAlfanumericas(&caracter);
                 // Hemos identificado una cadena, terminamos
                 terminado = 1;
+                break;
+            case 4: // Identificar numeros
             break;
+            case 5: // Identificar strings
+            break;
+            case 6: // Identificar operadores
+            break;
+            case 7: // Identificar delimitadores
+                _recuperarLexema(caracter, 0);
+                aceptarLexema();
+                terminado = 1;
+            break;
+
         }
     }
-    if (!strncmp(lexema, ".", 1)){
-        returnValue.valor = '.';
-        returnValue.lexema = (char*) malloc(1 * sizeof(char));
-        returnValue.lexema = ".";
-        return returnValue;
-    }
-    // Buscamos el entero correspondiente al lexema en la TS
-    returnValue = buscar_lexema(&TS, lexema);
-                
+               
 
     return returnValue;
 }
-
-
-void cadenaAlfanumerica(char caracter);
-
-/*
-tipoelem siguienteComponenteLexico(abin TS){
-    int terminado = 0;
-    int error = 0;
-    tipoelem returnValue;
-    int estado = 0;
-    
-    while (!(terminado || error)){
-        char caracter = siguienteCaracter();
-        switch (estado){
-            case 0:
-             
-
-        }
-        
-
-    }
-
-    return returnValue;
-}
-*/
 
 
 void _saltarComentario(char *caracter){
-    printf("Se encontro un comentario de una linea\n");
     while (*caracter != '\n'){
         *caracter = siguienteCaracter();
     }
+    // Hemos leido un comentario entero. No es un componente
+    // lexico, pero la funcion aceptarLexema 
+    // prepara el buffer para el siguiente componente lexico,
+    // es decir, estamos descartando el comentario
+    aceptarLexema();
 }
 
-// ADAPTAR AL SISTEMA DE ENTRADA
-// -- TODO --
-//
-// -- TODO --
-//
-/*
-int  _identificarSiComentarioMultilinea(char *caracter){
-    int posicionArchivo;   
-    // Guardamos la posicion del archivo
-    // TODO
-    posicionArchivo = ftell(archivo);
-    if (fgetc(archivo) == '"'){ // Posible comentario multilinea
-        if (fgetc(archivo) == '"'){ // ES un comentario multilinea
+
+int  _identificarSiComentarioMultilinea(char *caracter){    
+    if (siguienteCaracter() == '"'){ // Posible comentario multilinea
+        if (siguienteCaracter() == '"'){ // ES un comentario multilinea
             return 1;
         }
+        else{
+            retrocederCaracter();
+            retrocederCaracter();
+        }
     }
-    // Volvemos a la posicion original del archivo si no es un comentario multilinea
-    fseek(archivo, posicionArchivo, SEEK_SET);
-    // ungetc() // TODO
+    else{
+        retrocederCaracter();
+    }
+    
+
     return 0;
 }
-*/
+
 
 void _saltarComentarioMultilinea(char *caracter){
     while (1){
-        *caracter = siguienteCaracter();
+        *caracter = siguienteCaracter();        
         if (*caracter == '"'){
-            if (siguienteCaracter() == '"'){
-                if (siguienteCaracter() == '"'){
-                    if (siguienteCaracter() == '\n'){ // Saltamos el \n final
+            *caracter = siguienteCaracter();
+            if (*caracter == '"'){
+                *caracter = siguienteCaracter();
+                if (*caracter == '"'){
+                    *caracter = siguienteCaracter();
+                    if (*caracter == '\n'){ // Saltamos el \n final
+                        // Hemos leido un comentario entero. No es un componente
+                        // lexico, pero la funcion aceptarLexema 
+                        // prepara el buffer para el siguiente componente lexico,
+                        // es decir, estamos descartando el comentario
+                        aceptarLexema();
                         break;
                     } 
                 }
@@ -177,35 +171,55 @@ void _saltarComentarioMultilinea(char *caracter){
             break;
         }
     }
+    
 }
 
-/*
-void _identificarID(char *caracter){
-    printf("Se encontro un ID\n");
-    // Leemos la cadena y la guardamos en el buffer
-    indiceBuffer = 0;
-    while (!_esDelimitador(*caracter) && *caracter != EOF){
-        buffer[indiceBuffer] = *caracter;
-        indiceBuffer++;
+
+void _identificarCadenasAlfanumericas(char *caracter){
+    do{
+        printf("Caracter: %c\n", *caracter);
         *caracter = siguienteCaracter();
+    }while(isalpha(*caracter) || isdigit(*caracter) || *caracter == '_');
+    printf("Caracter: %c\n", *caracter);
+    if (_esLexemaUnicaracter(*caracter) || isblank(*caracter) || *caracter == '\n' || *caracter == EOF){
+        printf("Salto\n");
+        _recuperarLexema(ID, 1);
     }
-    // Añadimos el caracter de fin de cadena
-    buffer[indiceBuffer] = '\0';
-    // Copiamos el buffer en el lexema
-    strncpy(lexema, buffer, indiceBuffer);
-    // Vaciamos el buffer
-    _vaciarBuffer(buffer);
-    printf("Buffer: %s\n", buffer);
+    else{
+        _recuperarLexema(ID, 0);
+    }
+    printf("FIN\n");
 }
 
-*/
 
-int _esDelimitador(char cadena){
-    for (int i = 0; i < TAM_DELIMITERS; i++){
-        if (cadena == delimitadores[i]){
+void _recuperarLexema(int tipo, int retroceder){
+    if (retroceder){
+        printf("Retroceder\n");
+        retrocederCaracter();
+    }
+    if (tipo == ID){
+        printf("ID\n");
+        obtenerLexema(&returnValue);
+        returnValue.valor = obtenerValorTS(returnValue.lexema);
+    }
+    else{ // Para lexemas que solo tienen un caracter
+        returnValue.valor = tipo;
+        if (returnValue.lexema != NULL){
+            free(returnValue.lexema);
+        }
+        returnValue.lexema = (char*)malloc(2 * sizeof(char));
+        returnValue.lexema[0] = tipo;
+        returnValue.lexema[1] = '\0';
+    }
+    aceptarLexema();
+}
+
+
+int _esLexemaUnicaracter(char cadena){
+    for (int i = 0; i < TAM_LEXEMAS_UNICARACTER; i++){
+        if (cadena == lexemasIndividuales[i]){
             return 1;
         }
     }
     return 0;
 }
-

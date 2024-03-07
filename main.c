@@ -14,8 +14,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Inicializar tabla de simbolos
-    abin TS;
-    initTS(&TS);
+    initTS();
 
     // Inicializamos el sistema de entrada
     inicializarSistemaEntrada(argv[1]);
@@ -23,12 +22,12 @@ int main(int argc, char *argv[]) {
 
     // Empezamos el analisis lexico
     printf("--- ANALISIS SINTATICO ---\n");
-    analisisSintactico(TS);
+    analisisSintactico();
 
     // Cerramos el archivo y liberamos memoria
     printf("-- Liberando memoria... --\n");
     finalizarSistemaEntrada();
-    destruirTS(&TS);
+    destruirTS();
 
     printf("-- Fin del programa --\n");
     return 0;
