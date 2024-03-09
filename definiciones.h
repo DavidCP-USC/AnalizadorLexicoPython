@@ -18,6 +18,7 @@
 #define NOT 309
 #define ID 310
 #define NUM 311
+#define STRING 312
 
 // -- Tokens de operadores de mas de un caracter --
 #define MAYORIGUAL 411 // >=

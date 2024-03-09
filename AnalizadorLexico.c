@@ -20,7 +20,9 @@ void _saltarComentarioMultilinea(char *caracter);
 int _esLexemaUnicaracter(char cadena);
 void _recuperarLexema(int tipo, int retroceder);
 void _identificarCadenasAlfanumericas(char *caracter);
-void _identificarNumeros(char* caracter);
+void _identificarNumeros(char *caracter);
+void _identificarStrings(char *caracter, char tipoDeComillas);
+void _identificarOperadores(char *caracter);
 
 
 tipoelem siguienteComponenteLexico(){
@@ -28,6 +30,7 @@ tipoelem siguienteComponenteLexico(){
     short estado = 0;
     short terminado = 0;
     char caracter;
+    char tipoDeComillas;
 
 
     while (!(terminado || error)){
@@ -44,6 +47,7 @@ tipoelem siguienteComponenteLexico(){
                     }
                     else{
                         estado = 5; // Automata de strings
+                        tipoDeComillas = '"';
                     }
                 }
                 else if (isalpha(caracter) || caracter == '_'){
@@ -52,7 +56,8 @@ tipoelem siguienteComponenteLexico(){
                 else if (isdigit(caracter)){
                     estado = 4; // Automata de numeros
                 }
-                else if (caracter == '`'){ // Las " ya se han comprobado antes
+                else if (caracter == '\''){ // Las " ya se han comprobado antes
+                    tipoDeComillas = '\'';
                     estado = 5; // Automata de strings
                 }
                 else if(caracter == '+' || caracter == '-' || caracter == '*' || caracter == '/' || caracter == '<' || caracter == '>'){
@@ -101,8 +106,10 @@ tipoelem siguienteComponenteLexico(){
                 terminado = 1;
             break;
             case 5: // Identificar strings
+                _identificarStrings(&caracter, tipoDeComillas);
             break;
             case 6: // Identificar operadores
+                _identificarOperadores(&caracter);
             break;
             case 7: // Identificar delimitadores
                 _recuperarLexema(caracter, 0);
@@ -191,7 +198,7 @@ void _identificarCadenasAlfanumericas(char *caracter){
 }
 
 
-void _identificarNumeros(char* caracter){
+void _identificarNumeros(char *caracter){
     // Leemos hasta encontrar un caracter que no sea un digito
     do{
         *caracter = siguienteCaracter();
@@ -236,11 +243,24 @@ void _identificarNumeros(char* caracter){
     if (_esLexemaUnicaracter(*caracter) || isblank(*caracter) || *caracter == '\n' || *caracter == EOF){
         _recuperarLexema(NUM, 1);
     }
-    else{
-        _recuperarLexema(ID, 0);
-    }
-    
+}
 
+
+void _identificarStrings(char *caracter, char tipoDeComillas){
+    do{
+        *caracter = siguienteCaracter();
+        if (*caracter == EOF){
+            printf("Error: String no cerrado\n");
+            exit(1);
+        }
+    }while (*caracter != tipoDeComillas);
+
+    _recuperarLexema(STRING, 0);
+}
+
+
+void _identificarOperadores(char *caracter){
+    // TODO
 }
 
 
