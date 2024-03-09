@@ -110,7 +110,6 @@ void obtenerLexema(tipoelem *returnValue){
     if (returnValue->lexema != NULL){
         free(returnValue->lexema);
     }
-    printf("Delantero: -%d-\nInicio: -%d-\n", db.delantero, db.inicio);
 
 
     // Comprobamos si el lexema se encuentra entre el segundo bloque y el primero

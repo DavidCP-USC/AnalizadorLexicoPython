@@ -7,7 +7,7 @@ void analisisSintactico(){
     tipoelem componenteLexico;
     do{
         componenteLexico = siguienteComponenteLexico();
-        printf("Componente lexico\tLexema %d\tValor -%s-\n", componenteLexico.valor, componenteLexico.lexema);
+        printf("Componente lexico\tLexema %d\tValor %s\n", componenteLexico.valor, componenteLexico.lexema);
         //sleep(1);
     }while (componenteLexico.valor != EOF);
 }

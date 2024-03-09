@@ -20,6 +20,7 @@ void _saltarComentarioMultilinea(char *caracter);
 int _esLexemaUnicaracter(char cadena);
 void _recuperarLexema(int tipo, int retroceder);
 void _identificarCadenasAlfanumericas(char *caracter);
+void _identificarNumeros(char* caracter);
 
 
 tipoelem siguienteComponenteLexico(){
@@ -96,6 +97,8 @@ tipoelem siguienteComponenteLexico(){
                 terminado = 1;
                 break;
             case 4: // Identificar numeros
+                _identificarNumeros(&caracter);
+                terminado = 1;
             break;
             case 5: // Identificar strings
             break;
@@ -185,7 +188,59 @@ void _identificarCadenasAlfanumericas(char *caracter){
     else{
         _recuperarLexema(ID, 0);
     }
-    printf("FIN\n");
+}
+
+
+void _identificarNumeros(char* caracter){
+    // Leemos hasta encontrar un caracter que no sea un digito
+    do{
+        *caracter = siguienteCaracter();
+    }while (isdigit(*caracter));
+
+    // Comprobamos si es un numero en notacion decimal
+    if (*caracter == '.'){
+        *caracter = siguienteCaracter();
+        if (isdigit(*caracter)){
+            do{
+                *caracter = siguienteCaracter();
+            }while (isdigit(*caracter));
+        }
+        else{
+            printf("Error: Numero mal formado\n");
+            exit(1);
+            // ERROR TODO
+        }
+    }
+
+    // Comprobamos si es un numero en notacion cientifica
+    // (exponencial)
+    if(*caracter == 'e' || *caracter == 'E'){
+        *caracter = siguienteCaracter();
+        if (*caracter == '+' || *caracter == '-'){
+            *caracter = siguienteCaracter();
+        }
+        if (isdigit(*caracter)){
+            do{
+                *caracter = siguienteCaracter();
+            }while (isdigit(*caracter));
+        }
+        else{
+            printf("Error: Numero mal formado\n");
+            exit(1);
+            // ERROR TODO
+        }
+    }
+
+    // Hemos terminado de leer el numero
+    // aceptamos el lexema
+    if (_esLexemaUnicaracter(*caracter) || isblank(*caracter) || *caracter == '\n' || *caracter == EOF){
+        _recuperarLexema(NUM, 1);
+    }
+    else{
+        _recuperarLexema(ID, 0);
+    }
+    
+
 }
 
 
