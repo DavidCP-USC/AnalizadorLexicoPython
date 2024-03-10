@@ -8,8 +8,24 @@
 FILE* archivo = NULL;
 dobleBuffer db;
 
-// Funcion privada para hacer pruevas e imprimir el doble buffer
+// Funcion privada para hacer pruebas e imprimir el doble buffer
 void _imprimirDobleBuffer();
+
+// Funcion privada para hacer pruevas e imprimir el variables de control
+void imprimirTamano(){
+    int tamano;
+    if (db.delantero < db.inicio){
+        tamano = TAM_MAX_LEXEMA*2 - db.inicio + db.delantero + 2; // El +1 es para el caracter de fin de cadena
+    }
+    // Comprobamos si el lexema se encuentra entre el primer bloque y el segundo
+    else if (db.inicio < CENTINELA1 && db.delantero > CENTINELA1){
+        tamano = CENTINELA1 - db.inicio + db.delantero - CENTINELA1;
+    }
+    else{
+        tamano = db.delantero - db.inicio; // El +1 es para el caracter de fin de cadena
+    }
+    printf("\tDelantero: %d - inicio: %d - %d\n", db.delantero, db.inicio, tamano);
+}
 
 /*
 Inicializa el sistema de entrada
@@ -105,34 +121,35 @@ Notas:
     de fin de cadena ('\0')
 */
 void obtenerLexema(tipoelem *returnValue){
-    int tamano = db.delantero - db.inicio + 1;
+    int tamano;
     // Reservamos memoria para el lexema
     if (returnValue->lexema != NULL){
         free(returnValue->lexema);
     }
 
-
     // Comprobamos si el lexema se encuentra entre el segundo bloque y el primero
     if (db.delantero < db.inicio){
-        tamano = TAM_MAX_LEXEMA*2 - db.inicio + db.delantero + 1;
+        tamano = TAM_MAX_LEXEMA*2 - db.inicio + db.delantero + 2;
         returnValue->lexema = (char*) malloc(tamano);
         strncpy(returnValue->lexema, &db.buffer[db.inicio], TAM_MAX_LEXEMA*2 - db.inicio + 1);
         strncpy(&returnValue->lexema[TAM_MAX_LEXEMA*2 - db.inicio + 1], &db.buffer[0], db.delantero);
     }
     // Comprobamos si el lexema se encuentra entre el primer bloque y el segundo
     else if (db.inicio < CENTINELA1 && db.delantero > CENTINELA1){
-        tamano = CENTINELA1 - db.inicio + db.delantero - CENTINELA1 + 1;
+        tamano = CENTINELA1 - db.inicio + db.delantero - CENTINELA1;
         returnValue->lexema = (char*) malloc(tamano);
         strncpy(returnValue->lexema, &db.buffer[db.inicio], CENTINELA1 - db.inicio);
         strncpy(&returnValue->lexema[CENTINELA1 - db.inicio], &db.buffer[CENTINELA1 + 1], db.delantero - CENTINELA1);
     }
     else{
         tamano = db.delantero - db.inicio + 1;
-        returnValue->lexema = (char*) malloc(tamano);
-        strncpy(returnValue->lexema, &db.buffer[db.inicio], tamano - 1);
+        returnValue->lexema = (char*) malloc(tamano); 
+        strncpy(returnValue->lexema, &db.buffer[db.inicio], tamano);
     }
+
     // Anadimos el caracter de fin de cadena
-    returnValue->lexema[db.delantero - db.inicio] = '\0';
+    returnValue->lexema[tamano - 1] = '\0';
+    
 }
 
 void finalizarSistemaEntrada(){
@@ -158,4 +175,6 @@ void _imprimirDobleBuffer(){
     printf("Inicio: %d\n", db.inicio);
     printf("Delantero: %d\n", db.delantero);
 }
+
+
 

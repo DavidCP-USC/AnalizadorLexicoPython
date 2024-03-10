@@ -9,7 +9,6 @@
 #include "TS.h"
 
 char lexema[TAM_MAX];
-
 char lexemasIndividuales[TAM_LEXEMAS_UNICARACTER] = "()[]{}.,:;!&|";
 tipoelem returnValue;
 
@@ -20,23 +19,22 @@ int _comprobarSiPuntoEsParteDeNumero();
 int _esLexemaUnicaracter(char cadena);
 void _recuperarLexema(int tipo, int retroceder);
 void _identificarCadenasAlfanumericas(char *caracter);
-void _identificarNumeros(char *caracter);
+void _identificarNumeros(char *caracter, int *estado, int *terminado);
 void _identificarNumerosHexadecimales(char *caracter);
 void _identificarStrings(char *caracter, char tipoDeComillas);
 void _identificarOperadores(char *caracter);
 
 
-
 tipoelem siguienteComponenteLexico(){
-    short error = 0;
-    short terminado = 0;
-    short estado = 0;
+    int error = 0;
     char caracter;
     char tipoDeComillas;
+    int estado = 0;
+    int terminado = 0;
+    int terminadoIndicadoEnAutomata = 0;
 
 
     while (!(terminado || error)){
-        //printf("\tEstado: %d\n", estado);
         switch (estado){
             case 0:
                 caracter = siguienteCaracter();
@@ -111,8 +109,8 @@ tipoelem siguienteComponenteLexico(){
                 terminado = 1;
                 break;
             case 4: // Identificar numeros
-                _identificarNumeros(&caracter);
-                terminado = 1;
+                _identificarNumeros(&caracter, &estado, &terminadoIndicadoEnAutomata);
+                terminado = terminadoIndicadoEnAutomata;
                 break;
             case 5: // Identificar strings
                 _identificarStrings(&caracter, tipoDeComillas);
@@ -211,28 +209,50 @@ void _identificarCadenasAlfanumericas(char *caracter){
     do{
         *caracter = siguienteCaracter();
     }while(isalpha(*caracter) || isdigit(*caracter) || *caracter == '_');
-    if (_esLexemaUnicaracter(*caracter) || isblank(*caracter) || *caracter == '\n' || *caracter == EOF){
-        _recuperarLexema(ID, 1);
-    }
-    else{
-        _recuperarLexema(ID, 0);
-    }
+    _recuperarLexema(ID, 1);
 }
 
 
-void _identificarNumeros(char *caracter){ 
+void _identificarNumeros(char *caracter, int *estado, int *terminado){ 
     char caracterSiguiente = *caracter;
     // Comprobamos si es un numero en notacion hexadecimal
     if (*caracter == '0'){
         caracterSiguiente = siguienteCaracter();
         if (caracterSiguiente == 'x' || caracterSiguiente == 'X'){
             _identificarNumerosHexadecimales(caracter);
+            *terminado = 1;
             return;
         }
-        else{
-            retrocederCaracter();
-        }
+        *caracter = caracterSiguiente;
     }
+
+    /*
+    // Comprobamos si el numero es con signo (a = +1 es correcto)
+    if (*caracter == '+' || *caracter == '-'){
+        // printf("Caracter: %c\n", *caracter);
+        caracterSiguiente = siguienteCaracter();
+        // printf("Caracter siguiente: %c\n", caracterSiguiente);
+        // Si no no va seguido de un digito
+        // volvemos atras y lo enviamos al
+        // automata de correspondiente
+        if (!isdigit(caracterSiguiente)){
+            retrocederCaracter();
+            terminado = 0;
+            *estado = 7;
+            return;
+        }
+        char caracterSiguiente2 = siguienteCaracter();
+        
+        if (caracterSiguiente2 == 'x' || caracterSiguiente2 == 'X' || caracterSiguiente2 == '.'){
+            retrocederCaracter();
+            retrocederCaracter();
+            terminado = 0;
+            *estado = 7;
+            return;
+        }
+        retrocederCaracter();
+        *caracter = caracterSiguiente;
+    }*/
 
     // Leemos hasta encontrar un caracter que no sea un digito
     if (isdigit(*caracter)){
@@ -274,6 +294,7 @@ void _identificarNumeros(char *caracter){
     // aceptamos el lexema
     if (_esLexemaUnicaracter(*caracter) || isblank(*caracter) || *caracter == '\n' || *caracter == EOF || *caracter == '+' || *caracter == '-' || *caracter == '*' || *caracter == '/' || *caracter == '<' || *caracter == '>' || *caracter == '='){
         _recuperarLexema(NUM, 1);
+        *terminado = 1;
     }
     else{
         printf("Error: Numero mal formado\n");
@@ -434,7 +455,7 @@ void _identificarOperadores(char *caracter){
 
 
 void _recuperarLexema(int tipo, int retroceder){
-    //printf("\tTipo: %d\n", tipo);
+    //imprimirTamano();
     if (retroceder){
         retrocederCaracter();
     }
@@ -451,7 +472,6 @@ void _recuperarLexema(int tipo, int retroceder){
         returnValue.valor = NUM_HEX;
     }
     else if (tipo == MAS_IGUAL){
-        printf("MAS_IGUAL\n");
         returnValue.valor = MAS_IGUAL;
         if (returnValue.lexema != NULL){
             free(returnValue.lexema);

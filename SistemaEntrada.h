@@ -19,6 +19,7 @@ typedef struct{
     short delantero; // Indice de la posición del caracter que se está procesando
 }dobleBuffer;
 
+void imprimirTamano();
 
 void inicializarSistemaEntrada(char* nombreArchivo);
 
