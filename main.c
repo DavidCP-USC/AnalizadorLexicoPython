@@ -9,7 +9,7 @@
 int main(int argc, char *argv[]) {
     // Verificamos que se haya ingresado un archivo de entrada
     if (argc != 2){
-        printf("Error: Debe ingresar un archivo de entrada\n");
+        printf("Error: Debe ingresar un unico archivo de entrada\n");
         return 1;
     }
 

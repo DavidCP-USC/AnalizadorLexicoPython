@@ -7,10 +7,12 @@
 #include "AnalizadorLexico.h"
 #include "SistemaEntrada.h"
 #include "TS.h"
+#include "Errores.h"
 
 char lexema[TAM_MAX];
 char lexemasIndividuales[TAM_LEXEMAS_UNICARACTER] = "()[]{}.,:;!&|";
 tipoelem returnValue;
+int error = 0;
 
 void _saltarComentario(char *caracter);
 int  _identificarSiComentarioMultilinea() ;
@@ -27,7 +29,7 @@ void liberarMemoria();
 
 
 tipoelem siguienteComponenteLexico(){
-    int error = 0;
+    error = 0;
     char caracter;
     char tipoDeComillas;
     int estado = 0;
@@ -94,9 +96,8 @@ tipoelem siguienteComponenteLexico(){
                     aceptarLexema();
                 }
                 else{
-                    // GESTIONAR ERROR
-                    // -- TODO --
-                    printf("Error: Caracter no reconocido\n");
+                    // Imprimimos el error
+                    printTipoError(ERROR_ANALIZADOR_LEXICO, "Error: Caracter no reconocido\n");
                     error = 1;
                 }
                 break;
@@ -289,9 +290,9 @@ void _identificarNumeros(char *caracter, int *estado, int *terminado){
             }while (isdigit(*caracter));
         }
         else{
-            printf("Error: Numero mal formado\n");
-            exit(1);
-            // ERROR TODO
+            printTipoError(ERROR_ANALIZADOR_LEXICO, "Numero mal formado\n");
+            error = 1;
+            return;
         }
     }
 
@@ -302,9 +303,9 @@ void _identificarNumeros(char *caracter, int *estado, int *terminado){
         *terminado = 1;
     }
     else{
-        printf("Error: Numero mal formado\n");
-        exit(1);
-        // ERROR TODO
+        printTipoError(ERROR_ANALIZADOR_LEXICO, "Numero mal formado\n");
+        error = 1;
+        return;
     }
 }
 
@@ -317,9 +318,9 @@ void _identificarNumerosHexadecimales(char *caracter){
         _recuperarLexema(NUM_HEX, 1);
     }
     else{
-        printf("Error: Numero mal formado\n");
-        exit(1);
-        // ERROR TODO
+        printTipoError(ERROR_ANALIZADOR_LEXICO, "Numero mal formado\n");
+        error = 1;
+        return;
     }
 
 }
@@ -381,10 +382,9 @@ void _identificarOperadores(char *caracter){
             return;
         }
         else{
-            printf("Error: Operador no reconocido\n");
-            exit(1);
-            // ERROR
-            // TODO
+            printTipoError(ERROR_ANALIZADOR_LEXICO, "Operador no reconocido\n");
+            error = 1;
+            return;
         }
     }
     // Comprobamos si es '+' o '+='
@@ -451,10 +451,9 @@ void _identificarOperadores(char *caracter){
         _recuperarLexema(caracterAnterior, 1);
     }
     else{
-        // GESTIONAR ERROR
-        // -- TODO --
-        printf("Error: Operador no reconocido\n");
-        exit(1);
+        printTipoError(ERROR_ANALIZADOR_LEXICO, "Operador no reconocido\n");
+        error = 1;
+        return;
     }
 }
 

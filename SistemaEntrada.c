@@ -1,6 +1,7 @@
 #include "SistemaEntrada.h"
 #include "abin.h"
 #include <string.h>
+#include "Errores.h"
 
 
 
@@ -45,8 +46,7 @@ void inicializarSistemaEntrada(char* nombreArchivo){
             db.buffer[CENTINELA2]=EOF;
         }
         else{
-            // PASAR A GESTION DE ERRORES
-            // TODO
+            printTipoError(ERROR_SISTEMA_DE_ENTRADA, "No se pudo abrir el archivo\n");
             exit(1);
         }
     }    

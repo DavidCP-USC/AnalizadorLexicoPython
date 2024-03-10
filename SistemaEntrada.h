@@ -1,3 +1,6 @@
+#ifndef SISTEMAENTRADA_H
+#define SISTEMAENTRADA_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "definiciones.h"
@@ -36,3 +39,5 @@ void obtenerLexema(tipoelem *returnValue);
 void aceptarLexema();
 
 void rellenarTipoElemTS(int tipo, tipoelem *returnValue);
+
+#endif

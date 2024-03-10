@@ -6,17 +6,16 @@
 
 void analisisSintactico(){
     tipoelem componenteLexico;
-    do{
+    while(1){
         componenteLexico = siguienteComponenteLexico();
-        if (componenteLexico.valor == EOF){
+        if (componenteLexico.valor != EOF){
+            printf("Componente lexico -->\tLexema: %d\tValor: %s\n", componenteLexico.valor, componenteLexico.lexema);
+        }
+        else{
             printf("Componente lexico -->\tLexema: %d\tValor: EOF\n", componenteLexico.valor);
             break;
         }
-        else{
-            printf("Componente lexico -->\tLexema: %d\tValor: %s\n", componenteLexico.valor, componenteLexico.lexema);
-        }
-
-    }while (componenteLexico.valor != EOF);
+    }
     liberarMemoria(&componenteLexico);
 
 }
