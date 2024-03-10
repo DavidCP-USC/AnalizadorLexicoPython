@@ -40,10 +40,12 @@ void destruir(abin *A){
 	abin aux;
 	aux=*A;
 	if(!esVacio(aux)){
-	  supizq(&aux);
-	  supder(&aux);
-	  free(aux);
-	  *A=NULL;
+        supizq(&aux);
+        supder(&aux);
+        free(aux->info.lexema);
+        aux->info.lexema = NULL;
+        free(aux);
+        *A=NULL;
 	}	
 }
 
@@ -74,8 +76,11 @@ void supizq(abin *A){
 	if(!esVacio(aux)){
 	  supizq(&aux);
 	  supder(&aux);	
+      free((*A)->izq->info.lexema);
+      (*A)->izq->info.lexema = NULL;
 	  (*A)->izq=NULL;
 	  free(aux);
+      aux = NULL;
 	}	
 }
 
@@ -86,8 +91,11 @@ void supder(abin *A){
 	if(!esVacio(aux)){
 	  supizq(&aux);
 	  supder(&aux);	
+      free((*A)->der->info.lexema);
+      (*A)->der->info.lexema = NULL;
 	  (*A)->der=NULL;
 	  free(aux);
+      aux = NULL;
 	}	
 }
 
@@ -120,8 +128,7 @@ tipoelem buscar_lexema(abin *A, char *lexema) {
         insertar(A, ID, lexema);
         // Creamos el tipoelem
         tipoelem returnValue;
-        returnValue.valor = ID;
-        returnValue.lexema = (char*) malloc(strlen(lexema) + 1 * sizeof(char));
+        returnValue = buscar_lexema(A, lexema);
         return returnValue;
     }
 

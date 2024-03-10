@@ -23,6 +23,7 @@ void _identificarNumeros(char *caracter, int *estado, int *terminado);
 void _identificarNumerosHexadecimales(char *caracter);
 void _identificarStrings(char *caracter, char tipoDeComillas);
 void _identificarOperadores(char *caracter);
+void liberarMemoria();
 
 
 tipoelem siguienteComponenteLexico(){
@@ -75,9 +76,13 @@ tipoelem siguienteComponenteLexico(){
                     estado = 7; // Automata de lexemas de un caracter que no sean operadores ni letras
                 }
                 else if (caracter == EOF) { //si encontramos un EOF (esto funciona solo para el sistema de entrada simple)
-                    returnValue.valor = EOF;
-                    returnValue.lexema = "EOF";
                     terminado = 1;
+                    if (returnValue.lexema != NULL){
+                        free(returnValue.lexema);
+                        returnValue.lexema = NULL;
+                    }
+                    returnValue.valor = EOF;
+                    returnValue.lexema = malloc(0);
                 }
                 else if(isblank(caracter) || caracter == '\n'){
                     // Puede haber multiples espacios en blanco o saltos de linea
@@ -455,7 +460,6 @@ void _identificarOperadores(char *caracter){
 
 
 void _recuperarLexema(int tipo, int retroceder){
-    //imprimirTamano();
     if (retroceder){
         retrocederCaracter();
     }
@@ -601,4 +605,12 @@ int _esLexemaUnicaracter(char cadena){
         }
     }
     return 0;
+}
+
+
+void liberarMemoria(tipoelem *componenteLexico){
+    if (componenteLexico->lexema != NULL){
+        free(componenteLexico->lexema);
+        componenteLexico->lexema = NULL;
+    }
 }
