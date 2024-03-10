@@ -3,7 +3,7 @@
 // -- Constantes --
 #define TAM_MAX 255
 #define TAM_MAX_LEXEMA 64
-#define TAM_LEXEMAS_UNICARACTER 14
+#define TAM_LEXEMAS_UNICARACTER 13
 
 // -- Tokens -- 
 #define DEF 300
@@ -19,11 +19,19 @@
 #define ID 310
 #define NUM 311
 #define STRING 312
+#define NUM_HEX 313
 
 // -- Tokens de operadores de mas de un caracter --
-#define MAYORIGUAL 411 // >=
-#define MENORIGUAL 412 // <=
+#define MAYOR_IGUAL 411 // >=
+#define MENOR_IGUAL 412 // <=
 #define DISTINTO 414 // !=
+#define COMPARACION_IGUAL 415 // ==
+#define MAS_IGUAL 416 // +=
+#define MENOS_IGUAL 417 // -=
+#define POR_IGUAL 418 // *=
+#define DIVIDIDO_IGUAL 419 // /=
+#define MODULO_IGUAL 420 // %=
+#define EXPONENTE 421 // **
 
 // -- Tokens de gestion de errores --
 #define ERROR_SISTEMA_DE_ENTRADA 500
