@@ -9,7 +9,6 @@
 #include "TS.h"
 #include "Errores.h"
 
-char lexema[TAM_MAX_LEXEMA + 1];
 char lexemasIndividuales[TAM_LEXEMAS_UNICARACTER] = "()[]{}.,:;!&|";
 tipoelem returnValue;
 int error = 0;
@@ -27,7 +26,7 @@ void _identificarStrings(char *caracter, char tipoDeComillas);
 void _identificarOperadores(char *caracter);
 void liberarMemoria();
 
-
+// Devuelve el siguiente componente lexico al analizador sintactico
 tipoelem siguienteComponenteLexico(){
     error = 0;
     char caracter;
@@ -77,7 +76,7 @@ tipoelem siguienteComponenteLexico(){
                 else if (_esLexemaUnicaracter(caracter)){
                     estado = 7; // Automata de lexemas de un caracter que no sean operadores ni letras
                 }
-                else if (caracter == EOF) { //si encontramos un EOF (esto funciona solo para el sistema de entrada simple)
+                else if (caracter == EOF) { // Si encontramos un EOF terminamos y liberamos la memoria
                     terminado = 1;
                     if (returnValue.lexema != NULL){
                         free(returnValue.lexema);
@@ -100,7 +99,7 @@ tipoelem siguienteComponenteLexico(){
                 }
                 else{
                     // Imprimimos el error
-                    printTipoError(ERROR_ANALIZADOR_LEXICO, "Error: Caracter no reconocido\n");
+                    printTipoError(ERROR_ANALIZADOR_LEXICO, "Caracter no reconocido\n");
                     error = 1;
                 }
                 break;
@@ -134,7 +133,7 @@ tipoelem siguienteComponenteLexico(){
                 terminado = 1;
                 break;
             default:
-                printf("Error: Estado no reconocido\n");
+                printTipoError(ERROR_ANALIZADOR_LEXICO, "Estado no reconocido\n");
                 error = 1;
                 break;
 
@@ -144,21 +143,18 @@ tipoelem siguienteComponenteLexico(){
     return returnValue;
 }
 
-
+// Salta los comentarios de una linea
 void _saltarComentario(char *caracter){
     while (*caracter != '\n'){
         *caracter = siguienteCaracter();
         aceptarLexema();
     }
     aumentarContadorLineas();
-    // Hemos leido un comentario entero. No es un componente
-    // lexico, pero la funcion aceptarLexema 
-    // prepara el buffer para el siguiente componente lexico,
-    // es decir, estamos descartando el comentario
-    aceptarLexema();
+    // La funcion prepara el buffer para el siguiente componente 
+    // lexico, por eso se va ejecutando mientras se salta el comentario
 }
 
-
+// Identifica si estamos ante un comentario multilinea
 int  _identificarSiComentarioMultilinea(){    
     if (siguienteCaracter() == '"'){ // Posible comentario multilinea
         if (siguienteCaracter() == '"'){ // ES un comentario multilinea
@@ -175,7 +171,7 @@ int  _identificarSiComentarioMultilinea(){
     return 0;
 }
 
-
+// Salta los comentarios multilinea
 void _saltarComentarioMultilinea(char *caracter){
     while (1){
         *caracter = siguienteCaracter();
@@ -205,14 +201,14 @@ void _saltarComentarioMultilinea(char *caracter){
             }
         }
         if (*caracter == EOF){
-            printf("Error: comentario multilinea no cerrado\n");
+            printf("comentario multilinea no cerrado\n");
             break;
         }
     }
     
 }
 
-
+// Comprueba si el punto que se acaba de leer es parte de un numero
 int _comprobarSiPuntoEsParteDeNumero(){
     if (isdigit(siguienteCaracter())){
         return 1;
@@ -223,7 +219,7 @@ int _comprobarSiPuntoEsParteDeNumero(){
     }
 }
 
-
+// Identifica cadenas alfanumericas
 void _identificarCadenasAlfanumericas(char *caracter){
     do{
         *caracter = siguienteCaracter();
@@ -231,7 +227,7 @@ void _identificarCadenasAlfanumericas(char *caracter){
     _recuperarLexema(ID, 1);
 }
 
-
+// Identifica numeros
 void _identificarNumeros(char *caracter, int *estado, int *terminado){ 
     char caracterSiguiente = *caracter;
     int esFloat = 0;
@@ -302,7 +298,7 @@ void _identificarNumeros(char *caracter, int *estado, int *terminado){
     }
 }
 
-
+// Identifica numeros en notacion hexadecimal
 void _identificarNumerosHexadecimales(char *caracter){
     do{
         *caracter = siguienteCaracter();
@@ -321,20 +317,20 @@ void _identificarNumerosHexadecimales(char *caracter){
 
 }
 
-
+// Identifica strings
 void _identificarStrings(char *caracter, char tipoDeComillas){
     do{
         *caracter = siguienteCaracter();
         if (*caracter == EOF){
-            printf("Error: String no cerrado\n");
-            exit(1);
+            printTipoError(ERROR_ANALIZADOR_LEXICO, "Se llego al final de larchivo pero no se cerro el string\n");
+            return;
         }
     }while (*caracter != tipoDeComillas);
 
     _recuperarLexema(STRING, 0);
 }
 
-
+// Identifica operadores
 void _identificarOperadores(char *caracter){
     char caracterAnterior = *caracter;
     // Comrobamos si es '=' o '=='
@@ -456,7 +452,7 @@ void _identificarOperadores(char *caracter){
     }
 }
 
-
+// Recupera el lexema y lo acepta
 void _recuperarLexema(int tipo, int retroceder){
     if (retroceder){
         retrocederCaracter();
@@ -590,7 +586,8 @@ void _recuperarLexema(int tipo, int retroceder){
     aceptarLexema();
 }
 
-
+// Comprueba si el caracter es un lexema de un caracter que esta
+// almacenado en el array lexemasIndividuales
 int _esLexemaUnicaracter(char cadena){
     for (int i = 0; i < TAM_LEXEMAS_UNICARACTER; i++){
         if (cadena == lexemasIndividuales[i]){
@@ -600,7 +597,7 @@ int _esLexemaUnicaracter(char cadena){
     return 0;
 }
 
-
+// Libera la memoria
 void liberarMemoria(tipoelem *componenteLexico){
     if (componenteLexico->lexema != NULL){
         free(componenteLexico->lexema);

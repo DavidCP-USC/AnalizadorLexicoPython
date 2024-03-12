@@ -60,7 +60,7 @@ unsigned esVacio(abin A);
 
 /**
  * Recupera la informacion de la celda de la raiz del arbol
- * @param A
+ * @param A El arbol binario
  * @param E Puntero al nodo que apuntara a la informacion
  */
 void leer(abin A, tipoelem *E);
@@ -68,10 +68,19 @@ void leer(abin A, tipoelem *E);
 //funcion que inserta un nuevo componente lexico en el arbol
 void insertar(abin *A, int valor, char *lexema);
 
-//funcion que busca un lexema y devuelve su valor; si no esta en el arbol lo inserta
+/*
+    * Busca un lexema y devuelve su valor; si no esta en el arbol lo inserta
+    * @param A El arbol binario
+    * @param lexema El lexema a buscar
+    * @return Nodo del arbol que contiene el lexema
+
+*/
 tipoelem buscar_lexema(abin *A, char *lexema);
 
-//funcion que imprime el arbol
+/*
+    * Imprime el arbol en preorden
+    * @param A El arbol binario
+*/
 void imprimir(abin *A);
 
 
