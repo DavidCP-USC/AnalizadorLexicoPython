@@ -153,7 +153,6 @@ void imprimir(abin *A) {
         if (&(*A)->der != NULL) {
             imprimir(&(*A)->der);
         }
-            printf("Lexema: %s - Valor: %d\n", (*A)->info.lexema,  (*A)->info.valor);
-    
+        printf("Lexema: %s - Valor: %d\n", (*A)->info.lexema, (*A)->info.valor);
     }
 }

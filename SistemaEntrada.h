@@ -16,13 +16,9 @@ Se va a utilizar el método del doble buffer con un unico array
 pero se trabajara como dos bloques logicos
 */
 
-typedef struct{
-    char buffer[TAMANO_DOBLE_BUFFER];
-    short inicio; // Indice de la posicion del primer caracter del lexema
-    short delantero; // Indice de la posición del caracter que se está procesando
-}dobleBuffer;
 
-void imprimirTamano();
+
+void _imprimirTamano();
 
 void inicializarSistemaEntrada(char* nombreArchivo);
 
@@ -38,6 +34,9 @@ void obtenerLexema(tipoelem *returnValue);
 
 void aceptarLexema();
 
-void rellenarTipoElemTS(int tipo, tipoelem *returnValue);
+void aumentarContadorLineas();
+
+int obtenerContadorLineas();
+
 
 #endif

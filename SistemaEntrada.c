@@ -3,17 +3,23 @@
 #include <string.h>
 #include "Errores.h"
 
-
+typedef struct{
+    char buffer[TAMANO_DOBLE_BUFFER];
+    short inicio; // Indice de la posicion del primer caracter del lexema
+    short delantero; // Indice de la posición del caracter que se está procesando
+}dobleBuffer;
 
 // Aplicamos el Patron Singleton
 FILE* archivo = NULL;
 dobleBuffer db;
+int contadorLineas = 1;
 
+void aumentarContadorLineas();
 // Funcion privada para hacer pruebas e imprimir el doble buffer
 void _imprimirDobleBuffer();
 
 // Funcion privada para hacer pruevas e imprimir el variables de control
-void imprimirTamano(){
+void _imprimirTamano(){
     int tamano;
     if (db.delantero < db.inicio){
         tamano = TAM_MAX_LEXEMA*2 - db.inicio + db.delantero + 2; // El +1 es para el caracter de fin de cadena
@@ -66,6 +72,9 @@ char siguienteCaracter(){
                 db.buffer[bytesLeidos + INICIO_BLOQUE2] = EOF; // fread no guarda el EOF, lo anadimos manualmente
             }
             db.delantero++;
+            if (db.inicio > (CENTINELA1 + 2)){
+                printTipoError(ERROR_TAM_MAX_LEXEMA_SUPERADO, "Tamano maximo de lexema superado\n");
+            }
         }
 
         // Si es el EOF del centinela 2 actualizamos el primer bloque
@@ -73,6 +82,9 @@ char siguienteCaracter(){
             bytesLeidos = fread(db.buffer, 1, TAM_MAX_LEXEMA, archivo);
             if (feof(archivo)){
                 db.buffer[bytesLeidos] = EOF; // fread no guarda el EOF, lo anadimos manualmente
+            }
+            if (db.inicio > 0 && db.inicio < CENTINELA1){
+                printTipoError(ERROR_TAM_MAX_LEXEMA_SUPERADO, "Tamano maximo de lexema superado\n");
             }
             db.delantero = 0; // Volvemos al principio del buffer
         }
@@ -105,6 +117,12 @@ void retrocederCaracter(){
 
 void aceptarLexema(){
     db.inicio = db.delantero;
+    if (db.inicio == CENTINELA1){
+        db.inicio++;
+    }
+    else if(db.inicio == CENTINELA2){
+        db.inicio = 0;
+    }
 }
 
 
@@ -150,6 +168,14 @@ void obtenerLexema(tipoelem *returnValue){
     // Anadimos el caracter de fin de cadena
     returnValue->lexema[tamano - 1] = '\0';
     
+}
+
+void aumentarContadorLineas(){
+    contadorLineas++;
+}
+
+int obtenerContadorLineas(){
+    return contadorLineas;
 }
 
 void finalizarSistemaEntrada(){

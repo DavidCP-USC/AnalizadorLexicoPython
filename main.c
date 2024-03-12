@@ -15,20 +15,25 @@ int main(int argc, char *argv[]) {
 
     // Inicializar tabla de simbolos
     initTS();
+    printf("--- TABLA DE SIMBOLOS ---\n");
+    imprimirTS();
 
     // Inicializamos el sistema de entrada
     inicializarSistemaEntrada(argv[1]);
 
 
     // Empezamos el analisis lexico
-    printf("--- ANALISIS SINTATICO ---\n");
+    printf("\n\n--- ANALISIS SINTATICO ---\n");
     analisisSintactico();
 
+    printf("\n\n--- TABLA DE SIMBOLOS ---\n");
+    imprimirTS();
+
     // Cerramos el archivo y liberamos memoria
-    printf("-- Liberando memoria... --\n");
+    printf("\n--- Liberando memoria... ---\n");
     finalizarSistemaEntrada();
     destruirTS();
 
-    printf("-- Fin del programa --\n");
+    printf("\n--- Fin del programa ---\n");
     return 0;
 }

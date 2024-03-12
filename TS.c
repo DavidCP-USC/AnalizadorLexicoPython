@@ -18,7 +18,6 @@ void initTS(){
     insertar(&TS, ELSE, "else");
     insertar(&TS, RETURN, "return");
     insertar(&TS, NOT, "not");
-    insertar(&TS, NUM, "numero");
 }
 
 int obtenerValorTS(char* lexema){

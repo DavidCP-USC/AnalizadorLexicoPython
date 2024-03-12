@@ -160,25 +160,24 @@ AL FINAL SE EJECUTA EL PROGRAMA CON LA APLICACIÓN VALGRIND PARA VER SI QUEDAN P
 ------
 11/03
 ------
-Tiene que funcionar el la última versión de Ubuntu sin errores ni warnings
+Tiene que funcionar el la última versión de Ubuntu sin errores ni warnings - HECHO
 
 
 ERRORES
-Añadir error de superara el TAM_MAX_LEXEMA
-(Si recargo el bloque en el que está inicio ERROR por tamaño máximo de lexema superado) --> no es la mejor idea, pero se puede hacer si indicamos en la especificación el TAM_MAX_LEXEMA. De todas formas, si sale este error hay que enviar la parte inicial que sí fue leída correctamente (o solo un trozo pero hay que enviar algo)
+Añadir error de superara el TAM_MAX_LEXEMA (Si recargo el bloque en el que está inicio ERROR por tamaño máximo de lexema superado) --> no es la mejor idea, pero se puede hacer si indicamos en la especificación el TAM_MAX_LEXEMA. De todas formas, si sale este error hay que enviar la parte inicial que sí fue leída correctamente (o solo un trozo pero hay que enviar algo) - HECHO
 
-No imprimir STRING, sino su valor (sigue sin ir a la TS)
-
+No imprimir STRING, sino su valor (sigue sin ir a la TS) - HECHO
 
 
 
-DEBEMOS DE IMPRIMIR LA TS AL PRINCIPIO Y AL FINAL DEL PROGRAMA
 
-IDENTIFICAMOS COMPONENTES LEXICOS NUM Y NUM_DECIMAL (INTEGER y FLOAT) Los hexadecimales también son INTEGER en python (o eso creo) porque a nivel de memoria le asigna la misma cantidad
-Los exponentes son FLOATS
+DEBEMOS DE IMPRIMIR LA TS AL PRINCIPIO Y AL FINAL DEL PROGRAMA - HECHO
+
+IDENTIFICAMOS COMPONENTES LEXICOS NUM Y NUM_DECIMAL (INTEGER y FLOAT) Los hexadecimales también son INTEGER en python (o eso creo) porque a nivel de memoria le asigna la misma cantidad - HECHO
+Los exponentes son FLOATS - HECHO
 
 
-Añadir contador de línas dentro del analizador léxico (no del sistema de entrada)
+Añadir contador de línas dentro del analizador léxico (no del sistema de entrada) - HECHO
 
 
 

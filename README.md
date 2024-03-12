@@ -6,7 +6,7 @@
 # Versiones probadas
 * GNU GCC 13.2.1 20230801
 * GNU Make 4.4.1
-
+Todas las pruebas se han hecho bajo Ubuntu 22.04.4
 
 # Compilación
 

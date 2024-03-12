@@ -9,7 +9,7 @@
 #include "TS.h"
 #include "Errores.h"
 
-char lexema[TAM_MAX];
+char lexema[TAM_MAX_LEXEMA + 1];
 char lexemasIndividuales[TAM_LEXEMAS_UNICARACTER] = "()[]{}.,:;!&|";
 tipoelem returnValue;
 int error = 0;
@@ -89,9 +89,12 @@ tipoelem siguienteComponenteLexico(){
                 else if(isblank(caracter) || caracter == '\n'){
                     // Puede haber multiples espacios en blanco o saltos de linea
                     // entre componentes lexicos, por lo que nos los saltamos
-                    do{
+                    while (isblank(caracter) || caracter == '\n'){
+                        if (caracter == '\n'){
+                            aumentarContadorLineas();
+                        }
                         caracter = siguienteCaracter();
-                    }while (isblank(caracter) || caracter == '\n');
+                    }
                     retrocederCaracter();
                     aceptarLexema();
                 }
@@ -145,7 +148,9 @@ tipoelem siguienteComponenteLexico(){
 void _saltarComentario(char *caracter){
     while (*caracter != '\n'){
         *caracter = siguienteCaracter();
+        aceptarLexema();
     }
+    aumentarContadorLineas();
     // Hemos leido un comentario entero. No es un componente
     // lexico, pero la funcion aceptarLexema 
     // prepara el buffer para el siguiente componente lexico,
@@ -173,21 +178,29 @@ int  _identificarSiComentarioMultilinea(){
 
 void _saltarComentarioMultilinea(char *caracter){
     while (1){
-        *caracter = siguienteCaracter();        
+        *caracter = siguienteCaracter();
+        if (*caracter == '\n'){
+            aumentarContadorLineas();
+        }
+        aceptarLexema();        
         if (*caracter == '"'){
             *caracter = siguienteCaracter();
+            aceptarLexema();
+            if (*caracter == '\n'){
+                aumentarContadorLineas();
+            }
             if (*caracter == '"'){
                 *caracter = siguienteCaracter();
+                aceptarLexema();
+                if (*caracter == '\n'){
+                    aumentarContadorLineas();
+                }
                 if (*caracter == '"'){
                     *caracter = siguienteCaracter();
-                    if (*caracter == '\n'){ // Saltamos el \n final
-                        // Hemos leido un comentario entero. No es un componente
-                        // lexico, pero la funcion aceptarLexema 
-                        // prepara el buffer para el siguiente componente lexico,
-                        // es decir, estamos descartando el comentario
-                        aceptarLexema();
-                        break;
-                    } 
+                    // Podria darse el caso de que el siguiente caracter no sea \n
+                    retrocederCaracter();
+                    aceptarLexema();
+                    break;
                 }
             }
         }
@@ -221,6 +234,7 @@ void _identificarCadenasAlfanumericas(char *caracter){
 
 void _identificarNumeros(char *caracter, int *estado, int *terminado){ 
     char caracterSiguiente = *caracter;
+    int esFloat = 0;
     // Comprobamos si es un numero en notacion hexadecimal
     if (*caracter == '0'){
         caracterSiguiente = siguienteCaracter();
@@ -232,34 +246,6 @@ void _identificarNumeros(char *caracter, int *estado, int *terminado){
         *caracter = caracterSiguiente;
     }
 
-    /*
-    // Comprobamos si el numero es con signo (a = +1 es correcto)
-    if (*caracter == '+' || *caracter == '-'){
-        // printf("Caracter: %c\n", *caracter);
-        caracterSiguiente = siguienteCaracter();
-        // printf("Caracter siguiente: %c\n", caracterSiguiente);
-        // Si no no va seguido de un digito
-        // volvemos atras y lo enviamos al
-        // automata de correspondiente
-        if (!isdigit(caracterSiguiente)){
-            retrocederCaracter();
-            terminado = 0;
-            *estado = 7;
-            return;
-        }
-        char caracterSiguiente2 = siguienteCaracter();
-        
-        if (caracterSiguiente2 == 'x' || caracterSiguiente2 == 'X' || caracterSiguiente2 == '.'){
-            retrocederCaracter();
-            retrocederCaracter();
-            terminado = 0;
-            *estado = 7;
-            return;
-        }
-        retrocederCaracter();
-        *caracter = caracterSiguiente;
-    }*/
-
     // Leemos hasta encontrar un caracter que no sea un digito
     if (isdigit(*caracter)){
         do{
@@ -269,6 +255,7 @@ void _identificarNumeros(char *caracter, int *estado, int *terminado){
 
     // Comprobamos si es un numero en notacion decimal
     if (*caracter == '.'){
+        esFloat = 1;
         *caracter = siguienteCaracter();
         if (isdigit(*caracter)){
             do{
@@ -294,12 +281,18 @@ void _identificarNumeros(char *caracter, int *estado, int *terminado){
             error = 1;
             return;
         }
+        esFloat = 1;
     }
 
     // Hemos terminado de leer el numero
     // aceptamos el lexema
     if (_esLexemaUnicaracter(*caracter) || isblank(*caracter) || *caracter == '\n' || *caracter == EOF || *caracter == '+' || *caracter == '-' || *caracter == '*' || *caracter == '/' || *caracter == '<' || *caracter == '>' || *caracter == '='){
-        _recuperarLexema(NUM, 1);
+        if (esFloat){
+            _recuperarLexema(FLOATNUMBER, 1);
+        }
+        else{
+            _recuperarLexema(INTEGER, 1);            
+        }
         *terminado = 1;
     }
     else{
@@ -315,7 +308,10 @@ void _identificarNumerosHexadecimales(char *caracter){
         *caracter = siguienteCaracter();
     }while (isxdigit(*caracter));
     if (_esLexemaUnicaracter(*caracter) || isblank(*caracter) || *caracter == '\n' || *caracter == EOF){
-        _recuperarLexema(NUM_HEX, 1);
+        if (*caracter == '\n'){
+            aumentarContadorLineas();
+        }
+        _recuperarLexema(FLOATNUMBER, 1);
     }
     else{
         printTipoError(ERROR_ANALIZADOR_LEXICO, "Numero mal formado\n");
@@ -448,6 +444,9 @@ void _identificarOperadores(char *caracter){
     }
 
     else if (isblank(*caracter) || *caracter == '\n' || *caracter == EOF){
+        if (*caracter == '\n'){
+            aumentarContadorLineas();
+        }
         _recuperarLexema(caracterAnterior, 1);
     }
     else{
@@ -466,13 +465,13 @@ void _recuperarLexema(int tipo, int retroceder){
         obtenerLexema(&returnValue);
         returnValue.valor = obtenerValorTS(returnValue.lexema);
     }
-    else if (tipo == NUM){
+    else if (tipo == INTEGER){
         obtenerLexema(&returnValue);
-        returnValue.valor = NUM;
+        returnValue.valor = INTEGER;
     }
-    else if (tipo == NUM_HEX){
+    else if (tipo == FLOATNUMBER){
         obtenerLexema(&returnValue);
-        returnValue.valor = NUM_HEX;
+        returnValue.valor = FLOATNUMBER;
     }
     else if (tipo == MAS_IGUAL){
         returnValue.valor = MAS_IGUAL;
@@ -576,12 +575,7 @@ void _recuperarLexema(int tipo, int retroceder){
     }
     else if (tipo == STRING){
         returnValue.valor = STRING;
-        if (returnValue.lexema != NULL){
-            free(returnValue.lexema);
-        }
-        returnValue.lexema = (char*)malloc(7 * sizeof(char));
-        strcpy(returnValue.lexema, "STRING"); // Copiamos los 6 primeros caracteres
-        returnValue.lexema[6] = '\0';
+        obtenerLexema(&returnValue);
     }
 
     else{ // Para lexemas que solo tienen un caracter
