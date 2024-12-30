@@ -18,7 +18,7 @@ void aumentarContadorLineas();
 // Funcion privada para hacer pruebas e imprimir el doble buffer
 void _imprimirDobleBuffer();
 
-// Funcion privada para hacer pruevas e imprimir el variables de control
+// Funcion privada para hacer pruebas e imprimir el variables de control
 void _imprimirTamano(){
     int tamano;
     if (db.delantero < db.inicio){
