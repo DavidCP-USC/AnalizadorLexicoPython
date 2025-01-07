@@ -186,7 +186,7 @@ void finalizarSistemaEntrada(){
 
 
 
-// Funcion privada para hacer pruevas e imprimir el doble buffer
+// Funcion privada para hacer pruebas e imprimir el doble buffer
 void _imprimirDobleBuffer(){
     printf("Buffer: ");
     for (int i = 0; i < TAMANO_DOBLE_BUFFER; i++){
